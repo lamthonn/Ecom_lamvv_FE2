@@ -1,0 +1,57 @@
+@import "styles/themes.scss";
+@import "styles/variables.scss";
+*{
+    font-size: 16px;
+}
+.ant-menu-item,
+.ant-menu{
+    background-color: var(--color-primary-9) !important;
+}
+
+.ant-menu-item:hover,
+.ant-menu-submenu-title:hover{
+    background-color: var(--color-primary-10) !important;
+}
+
+.ant-menu-submenu-selected{
+    .ant-menu-submenu-title{
+        color: white !important;
+    }
+}
+
+.ant-btn-color-primary{
+    background-color: var(--color-primary-7) !important;
+}
+
+.ant-layout{
+    margin-inline-start: 130px !important;
+}
+
+.ant-layout-sider{
+    max-width: 255px !important;
+    width: 255px !important;
+}
+
+.ant-divider-horizontal{
+    margin: 16px 0 !important;
+}
+
+.ant-layout-content{
+    margin: 0 16px !important;
+}
+
+.ant-form-item-control-input-content,
+.form-item-custom 
+{
+    margin-bottom: 0 !important;
+}
+
+
+.ant-picker ,
+.ant-picker-outlined{
+    border: 1px solid #9CA3AF !important;
+}
+
+.ant-typography{
+    font-size: 16px !important;
+}
