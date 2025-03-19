@@ -2,7 +2,11 @@ import { FunctionComponent, ReactNode, useState } from "react";
 import "./FormInputNumber.scss";
 import { InputNumber, Form, Typography, Tooltip } from "antd";
 import { InputStatus } from "antd/es/_util/statusUtils";
-import { CloseCircleFilled, CloseCircleOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
 type FormInputNumberProps = {
   label?: string | ReactNode; // Thêm prop cho label
@@ -38,9 +42,10 @@ const FormInputNumber: FunctionComponent<FormInputNumberProps> = ({
   precision,
   ...rest
 }) => {
-
   const handleClear = () => {
-    onChange ? onChange(null, '') : null;
+    if (onChange) {
+      onChange(null, "");
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -71,10 +76,7 @@ const FormInputNumber: FunctionComponent<FormInputNumberProps> = ({
       return;
     }
     const [integer, decimal] = val.toString().split(".");
-    if (
-      (integer && integer.length > 11) ||
-      (decimal && decimal.length > 10)
-    ) {
+    if ((integer && integer.length > 11) || (decimal && decimal.length > 10)) {
       setIsError(true);
       setErrorMessage("Vui lòng nhập kiểu dữ liệu decimal (21,10)");
     } else {
@@ -84,10 +86,8 @@ const FormInputNumber: FunctionComponent<FormInputNumberProps> = ({
   };
 
   return (
-    <div className="form-item"
-      style={isError ? {borderColor:"red"} : {}}
-      >
-      <Typography.Text style={{ fontSize: '16px' }}>{label}</Typography.Text>
+    <div className="form-item" style={isError ? { borderColor: "red" } : {}}>
+      <Typography.Text style={{ fontSize: "16px" }}>{label}</Typography.Text>
       <div className="clearable-input-number">
         <InputNumber
           type="number"
@@ -109,8 +109,15 @@ const FormInputNumber: FunctionComponent<FormInputNumberProps> = ({
           }}
           onKeyDown={(event) => {
             //const invalidChars = ["e", "E", "+", "-"];
-            const charCode = (event.which) ? event.which : event.key || event.keyCode;  // keyCode is deprecated but needed for some browsers
-            return !(charCode === 101 || charCode === 69 || charCode === 45 || charCode === 43);
+            const charCode = event.which
+              ? event.which
+              : event.key || event.keyCode; // keyCode is deprecated but needed for some browsers
+            return !(
+              charCode === 101 ||
+              charCode === 69 ||
+              charCode === 45 ||
+              charCode === 43
+            );
           }}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
@@ -122,10 +129,7 @@ const FormInputNumber: FunctionComponent<FormInputNumberProps> = ({
           {...rest}
         />
         {value !== null && value !== undefined && (
-          <CloseOutlined
-            className="clear-icon"
-            onClick={handleClear}
-          />
+          <CloseOutlined className="clear-icon" onClick={handleClear} />
         )}
       </div>
     </div>
