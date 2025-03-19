@@ -167,6 +167,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   //mở modal edit
   const [idEditRecord, setIdEditRecord] = useState<string | null>(null);
   const handleOpenEditModal = (data: any) => {
+    console.log("data::", data);
     setIdEditRecord(data.id);
     form.setFieldsValue(data);
     setIsShowModalEdit(true);
