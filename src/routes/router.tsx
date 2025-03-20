@@ -9,6 +9,7 @@ import { routesConfig } from "./routes";
 import QuanLyDanhMuc from "../pages/admin-page/quan-ly-san-pham/quan-ly-danh-muc";
 import DanhSachSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham";
 import ThemSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/them-san-pham";
+import DanhSachKhachHang from "../pages/admin-page/quan-ly-khach-hang/danh-sach-khach-hang";
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,15 @@ export const router = createBrowserRouter([
             <ThemSanPham />
           </ProtectedRoute>
         )
+      },
+      // quản lý khách hàng
+      {
+        path: routesConfig.quanLyKhachHang,
+        element:(
+          <ProtectedRoute>
+            <DanhSachKhachHang />
+          </ProtectedRoute>
+          )
       }
     ]
   },

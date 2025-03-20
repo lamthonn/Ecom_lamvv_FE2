@@ -8,5 +8,9 @@ export const routesConfig = {
     //quản lý sản phẩm
     quanLyDanhMuc:"/seller-center/quan-ly-danh-muc",
     quanLySanPham:"/seller-center/quan-ly-san-pham",
-    themMoiSanPham:"/seller-center/them-moi-san-pham"
+    themMoiSanPham:"/seller-center/them-moi-san-pham",
+
+
+    // quản ly khách hàng
+    quanLyKhachHang:"/seller-center/quan-ly-khach-hang",
 }
