@@ -5,6 +5,7 @@ import {
   Divider,
   Row,
   Space,
+  Spin,
   Table,
   Typography,
   Upload,
@@ -19,6 +20,13 @@ import FormSelect from "../../../../../components/form-select/FormSelect";
 import FormAreaCustom from "../../../../../components/text-area/FormTextArea";
 import ButtonCustom from "../../../../../components/button/button";
 import FormInputNumber from "../../../../../components/form-input-number/FormInputNumber";
+import { useNavigate } from "react-router-dom";
+import { routesConfig } from "../../../../../routes/routes";
+import {
+  axiosConfig,
+  axiosConfigUpload,
+} from "../../../../../config/configApi";
+import axios from "axios";
 type tuyChonPhanLoaiProps = {
   key: number;
   tuy_chon_phan_loai?: any;
@@ -32,6 +40,7 @@ interface DataSourceItem {
   mau_sac?: any;
   kich_thuoc?: any;
   gia?: number;
+  khuyen_mai?:number;
   so_luong?: number;
   sku?: string;
   [key: string]: any;
@@ -43,16 +52,19 @@ const ThemSanPham: React.FC = () => {
     color: "var(--color-primary-7)",
   };
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   //thông tin sản phẩm
   const [fileList, setFileList] = useState([]);
   const [fileAnhBia, setFileAnhBia] = useState([]);
+  const [maSanPham, setMaSanPham] = useState<string>("");
   const [tenSanPham, setTenSanPham] = useState<string>("");
   const [xuatXu, setXuatXu] = useState<string>("");
   const [danhMuc, setDanhMuc] = useState<string>("");
   const [moTa, setMoTa] = useState<string>("");
 
   //thông tin bán hàng
-  
+
   const handleChange = ({ fileList }: any) => {
     if (fileList.length > 9) {
       ShowToast("warning", "Thông báo", "Tối đa có thể tải lên 9 ảnh", 3);
@@ -85,6 +97,7 @@ const ThemSanPham: React.FC = () => {
             <Col span={20}>
               <Upload
                 listType="picture-card"
+                multiple
                 fileList={fileList}
                 accept="image/*"
                 onChange={handleChange}
@@ -128,6 +141,20 @@ const ThemSanPham: React.FC = () => {
             </Col>
           </Row>
 
+          <Row gutter={22} className="ma-san-pham thong-tin-sp">
+            <Col span={4} className="label-sp">
+              <Typography.Text>
+                Mã sản phẩm <span style={{ color: "red" }}>*</span>:
+              </Typography.Text>
+            </Col>
+            <Col span={20}>
+              <FormItemInput
+                placeholder="Mã sản phẩm"
+                value={maSanPham}
+                onChange={(e: any) => setMaSanPham(e.target.value)}
+              />
+            </Col>
+          </Row>
           <Row gutter={22} className="ten-san-pham thong-tin-sp">
             <Col span={4} className="label-sp">
               <Typography.Text>
@@ -199,7 +226,7 @@ const ThemSanPham: React.FC = () => {
   //#endregion
 
   //#region Thông tin bán hàng
-  const [dataSource, setDataSource] = useState<DataSourceItem[]>([])
+  const [dataSource, setDataSource] = useState<DataSourceItem[]>([]);
   const [phan_loai, set_phan_loai] = useState<phanLoaiProps[]>([
     {
       ten_phan_loai: "mau-sac",
@@ -237,14 +264,35 @@ const ThemSanPham: React.FC = () => {
           <FormInputNumber
             style={{ width: "100%" }}
             afterPrefixIcon="VND"
-          onChange={(value: number | null, values: string | null) => {
-            if (value !== null) {
-              const updatedDataSource = dataSource.map((item, index) =>
-                index === record.key ? { ...item, gia: value } : item
-              );
-              setDataSource(updatedDataSource);
-            }
-          }}
+            onChange={(value: number | null, values: string | null) => {
+              if (value !== null) {
+                const updatedDataSource = dataSource.map((item, index) =>
+                  item.key === record.key ? { ...item, gia: value } : item
+                );
+                setDataSource(updatedDataSource);
+              }
+            }}
+          />
+        </>
+      ),
+    },
+    {
+      title: "Giá khuyến mại",
+      dataIndex: "khuyen_mai",
+      key: "khuyen_mai",
+      render: (text: any, record: any) => (
+        <>
+          <FormInputNumber
+            style={{ width: "100%" }}
+            afterPrefixIcon="VND"
+            onChange={(value: number | null, values: string | null) => {
+              if (value !== null) {
+                const updatedDataSource = dataSource.map((item, index) =>
+                  item.key === record.key ? { ...item, khuyen_mai: value } : item
+                );
+                setDataSource(updatedDataSource);
+              }
+            }}
           />
         </>
       ),
@@ -255,15 +303,17 @@ const ThemSanPham: React.FC = () => {
       key: "so_luong",
       render: (text: any, record: any) => (
         <>
-          <FormInputNumber style={{ width: "100%" }} 
-          onChange={(value: number | null, values: string | null) => {
-            if (value !== null) {
-              const updatedDataSource = dataSource.map((item, index) =>
-                index === record.key ? { ...item, so_luong: value } : item
-              );
-              setDataSource(updatedDataSource);
-            }
-          }}/>
+          <FormInputNumber
+            style={{ width: "100%" }}
+            onChange={(value: number | null, values: string | null) => {
+              if (value !== null) {
+                const updatedDataSource = dataSource.map((item, index) =>
+                  item.key === record.key ? { ...item, so_luong: value } : item
+                );
+                setDataSource(updatedDataSource);
+              }
+            }}
+          />
         </>
       ),
     },
@@ -276,9 +326,11 @@ const ThemSanPham: React.FC = () => {
           <FormItemInput
             value={text}
             onChange={(e: any) => {
-              const updatedDataSource = dataSource.map((item, index) =>
-          index === record.key ? { ...item, sku: e.target.value } : item
-              );
+              const updatedDataSource = dataSource.map((item, index) => {
+                return item.key === record.key
+                  ? { ...item, sku: e.target.value }
+                  : item;
+              });
               setDataSource(updatedDataSource);
             }}
           />
@@ -297,7 +349,6 @@ const ThemSanPham: React.FC = () => {
     }
     return 0;
   };
-  
 
   useEffect(() => {
     if (
@@ -321,33 +372,39 @@ const ThemSanPham: React.FC = () => {
 
     var arr: DataSourceItem[] = [];
 
-    const mauSac = phan_loai.find((item: any) => item.ten_phan_loai === "mau-sac")?.phan_loai || [];
-    const kichThuoc = phan_loai.find((item: any) => item.ten_phan_loai === "size")?.phan_loai || [];
+    const mauSac =
+      phan_loai.find((item: any) => item.ten_phan_loai === "mau-sac")
+        ?.phan_loai || [];
+    const kichThuoc =
+      phan_loai.find((item: any) => item.ten_phan_loai === "size")?.phan_loai ||
+      [];
 
     mauSac.forEach((mau: any) => {
-      if(kichThuoc.length > 0){
+      if (kichThuoc.length > 0) {
         kichThuoc.forEach((size: any) => {
           arr.push({
+            key: `${Math.random()}`,
             "mau-sac": mau.tuy_chon_phan_loai,
             size: size.tuy_chon_phan_loai,
-            gia:undefined,
-            so_luong:undefined,
+            gia: undefined,
+            khuyen_mai: undefined,
+            so_luong: undefined,
             sku: undefined,
           });
         });
-      }
-      else{
+      } else {
         arr.push({
+          key: Math.random(),
           "mau-sac": mau.tuy_chon_phan_loai,
-          gia:undefined,
-          so_luong:undefined,
+          khuyen_mai: undefined,
+          gia: undefined,
+          so_luong: undefined,
           sku: undefined,
         });
       }
-      
     });
 
-    setDataSource(arr)
+    setDataSource(arr);
   }, [phan_loai]);
   const Items2 = [
     {
@@ -555,7 +612,11 @@ const ThemSanPham: React.FC = () => {
             </Col>
 
             <Col span={20}>
-              <Table columns={columns} dataSource={dataSource} />
+              <Table
+                columns={columns}
+                dataSource={dataSource}
+                pagination={false}
+              />
             </Col>
           </Row>
         </div>
@@ -563,29 +624,134 @@ const ThemSanPham: React.FC = () => {
     },
   ];
   //#endregion
+  const navigate = useNavigate();
+  const handleOk = async () => {
+    setLoading(true);
+    //lưu ảnh trước => trả ra đường dẫn => lưu data sản phẩm
+    const formData = new FormData();
+    const formDataMuti = new FormData();
+    fileAnhBia.forEach((file: any) => {
+      if (file.originFileObj) {
+        formData.append("file", file.originFileObj);
+      }
+    });
+    fileList.forEach((file: any) => {
+      if (file.originFileObj) {
+        formDataMuti.append("files", file.originFileObj);
+      }
+    });
 
+    try {
+      //gọi api thêm ảnh bìa => trả ra url của ảnh bìa => add vào api thêm sản phẩm
+      await axiosConfigUpload
+        .post("api/DanhSachSanPham/add-cover-image", formData)
+        .then((res: any) => {
+          const newdata = dataSource.map((item: any) => {
+            return {
+              danh_muc_id: danhMuc,
+              ma_san_pham: maSanPham,
+              ten_san_pham: tenSanPham,
+              mo_ta: moTa,
+              xuat_xu: xuatXu,
+              mau_sac: item["mau-sac"],
+              size: item["size"],
+              gia: item.gia,
+              khuyen_mai: item.khuyen_mai,
+              so_luong: item.so_luong,
+              sku: item.sku,
+              duong_dan_anh_bia: res.data,
+            };
+          });
+
+          axiosConfig.post("api/DanhSachSanPham/create", newdata).then(() => {
+            //lưu list ảnh sản phẩm vào sản phẩm
+            axiosConfigUpload
+              .post("api/DanhSachSanPham/add-list-image", formDataMuti, {
+                headers: { "Content-Type": "multipart/form-data" },
+              })
+              .then((resData:any) => {
+                axiosConfig.post("api/DanhSachSanPham/add-image-files", {
+                    filePath: resData.data,
+                    ma: maSanPham,
+                  })
+                  .then((res: any) => {
+                    ShowToast(
+                      "success",
+                      "Thông báo",
+                      "Thêm sản phẩm thành công",
+                      3
+                    );
+                    navigate(routesConfig.quanLySanPham);
+                  })
+                  .catch((err: any) => {
+                    ShowToast("error", "Thông báo", `Có lỗi xảy ra: ${err}`, 3);
+                  });
+              })
+              .catch(() => {
+                ShowToast(
+                  "error",
+                  "Thông báo",
+                  `Có lỗi xảy ra khi tải danh sách ảnh`,
+                  3
+                );
+              });
+          });
+        })
+        .catch((err: any) => {
+          ShowToast("error", "Thông báo", `Có lỗi xảy ra: ${err}`, 3);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } catch (error) {
+      ShowToast("error", "Thông báo", "Lỗi khi tải ảnh lên", 3);
+      setLoading(false);
+    }
+    return false;
+  };
   return (
     <>
       <MainLayout label="Thêm mới sản phẩm">
-        <Collapse
-          bordered={false}
-          defaultActiveKey={["1"]}
-          expandIcon={() => false}
-          items={Items1}
-          style={{ marginBottom: "16px" }}
-        />
+        <Spin spinning={loading}>
+          <Collapse
+            bordered={false}
+            defaultActiveKey={["1"]}
+            expandIcon={() => false}
+            items={Items1}
+            style={{ marginBottom: "16px" }}
+          />
 
-        <Collapse
-          bordered={false}
-          defaultActiveKey={["1"]}
-          expandIcon={() => false}
-          items={Items2}
-        />
+          <Collapse
+            bordered={false}
+            defaultActiveKey={["1"]}
+            expandIcon={() => false}
+            items={Items2}
+          />
 
-        <div style={{display:"flex", justifyContent:"flex-end", gap:"16px", marginTop:"16px"}}>
-            <ButtonCustom text="Hủy" variant="outlined" style={{width:"100px"}}/>
-            <ButtonCustom text="Lưu" variant="solid" style={{width:"100px"}}/>
-        </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "16px",
+              marginTop: "16px",
+            }}
+          >
+            <ButtonCustom
+              text="Hủy"
+              variant="outlined"
+              style={{ width: "100px" }}
+              onClick={() => {
+                navigate(routesConfig.quanLySanPham);
+              }}
+            />
+            <ButtonCustom
+              text="Lưu"
+              variant="solid"
+              style={{ width: "100px" }}
+              onClick={handleOk}
+            />
+          </div>
+        </Spin>
       </MainLayout>
     </>
   );

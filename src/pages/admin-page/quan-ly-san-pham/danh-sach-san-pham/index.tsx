@@ -38,22 +38,24 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
         },
         {
           title: "Giá khuyến mãi",
-          render: (item: any) => <>{item.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</>,
+          render: (item: any) => <>{item ? item.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : ""}</>,
           dataIndex: "khuyen_mai",
         },
         {
           title: "Số lượng",
-          dataIndex: "khuyen_mai",
+          dataIndex: "so_luong",
         },
         {
           title: "Trạng thái",
-          dataIndex: "is_active ",
+          dataIndex: "is_active",
           render: (item: any) => <>{item === true ? "Hoạt động" : "Không hoạt động"}</>,
         },
         {
           title: "Ngày tạo",
           dataIndex: "created",
-          render: (item: any) => <>{formatDate(item)}</>,
+          render: (item: any) => {
+            return <>{formatDate(item)}</>
+          },
         },
       ];
 

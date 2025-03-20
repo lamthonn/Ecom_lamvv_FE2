@@ -54,6 +54,7 @@ type TableCustomProps = {
   delete_any_url?: string;
   export_url?: string;
   handleOpenModalAddCustom?: () => void;
+  handleOpenModalEditCustom?: () => Function;
 
   //operation button
   add_button?: boolean;
@@ -77,6 +78,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   isEditOne = true,
   isDeleteOne = true,
   handleOpenModalAddCustom,
+  handleOpenModalEditCustom,
   EditTitle,
   DeleteTitle,
   EditComponent,
@@ -167,9 +169,15 @@ const TableCustom: React.FC<TableCustomProps> = ({
   //mở modal edit
   const [idEditRecord, setIdEditRecord] = useState<string | null>(null);
   const handleOpenEditModal = (data: any) => {
-    setIdEditRecord(data.id);
-    form.setFieldsValue(data);
-    setIsShowModalEdit(true);
+    if(handleOpenModalEditCustom)
+    {
+      handleOpenModalEditCustom()
+    }
+    else{
+      setIdEditRecord(data.id);
+      form.setFieldsValue(data);
+      setIsShowModalEdit(true);
+    }
   };
 
   //open add modal
