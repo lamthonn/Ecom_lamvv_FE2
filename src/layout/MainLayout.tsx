@@ -43,6 +43,36 @@ const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
     if(item.key === "danh-sach-san-pham") {
       navigate(routesConfig.quanLySanPham);
     }
+    if(item.key === "nhap-kho") {
+      navigate(routesConfig.nhapKho);
+    }
+    if(item.key === "don-hang") {
+      navigate(routesConfig.quanLyDonHang);
+    }
+    if(item.key === "ma-giam-gia") {
+      navigate(routesConfig.quanLyMaGiamGia);
+    }
+    if(item.key === "chuong-trinh-marketing") {
+      navigate(routesConfig.chuongTrinhMarketing);
+    }
+    if(item.key === "quang-cao") {
+      navigate(routesConfig.quangCao);
+    }
+    if(item.key === "don-vi-van-chuyen") {
+      navigate(routesConfig.donViVanChuyen);
+    }
+    if(item.key === "doanh-thu") {
+      navigate(routesConfig.doanhThu);
+    }
+    if(item.key === "so-du") {
+      navigate(routesConfig.SoDu);
+    }
+    if(item.key === "tai-khoan-ngan-hang") {
+      navigate(routesConfig.taiKhoanNganHang);
+    }
+    if(item.key === "cau-hinh-he-thong") {
+      navigate(routesConfig.cauHinhHeThong);
+    }
   }
   // Kiểm tra nếu route là "/login"
   if (location.pathname === "/login") {

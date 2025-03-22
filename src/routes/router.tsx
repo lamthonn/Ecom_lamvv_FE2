@@ -11,6 +11,8 @@ import DanhSachSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-
 import ThemSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/them-san-pham";
 import DanhSachKhachHang from "../pages/admin-page/quan-ly-khach-hang/danh-sach-khach-hang";
 import SuaSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/sua-san-pham";
+import NhapKho from "../pages/admin-page/van-hanh/nhap-kho";
+import DonHang from "../pages/admin-page/van-hanh/don-hang";
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +82,24 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DanhSachKhachHang />
+          </ProtectedRoute>
+        ),
+      },
+
+      //vận hành
+      {
+        path: routesConfig.nhapKho,
+        element: (
+          <ProtectedRoute>
+            <NhapKho />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: routesConfig.quanLyDonHang,
+        element: (
+          <ProtectedRoute>
+            <DonHang />
           </ProtectedRoute>
         ),
       },
