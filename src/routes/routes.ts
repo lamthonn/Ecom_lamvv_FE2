@@ -9,6 +9,7 @@ export const routesConfig = {
     quanLyDanhMuc:"/seller-center/quan-ly-danh-muc",
     quanLySanPham:"/seller-center/quan-ly-san-pham",
     themMoiSanPham:"/seller-center/them-moi-san-pham",
+    suaSanPham:"/seller-center/sua-san-pham",
 
 
     // quản ly khách hàng

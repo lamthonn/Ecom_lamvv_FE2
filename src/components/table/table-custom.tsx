@@ -1,11 +1,9 @@
 import {
-  Col,
   Divider,
   Form,
   Modal,
   Pagination,
   PaginationProps,
-  Row,
   Skeleton,
   Space,
   Table,
@@ -21,15 +19,12 @@ import {
 } from "@ant-design/icons";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { title } from "process";
 import ButtonCustom from "../button/button";
 import { axiosConfig } from "../../config/configApi";
-import { create } from "domain";
 import ShowToast from "../show-toast/ShowToast";
 import SearchLayout from "../../layout/search-layout";
-import FormItemInput from "../form-input/FormInput";
-import { TableProps } from "antd/lib";
 import { TableRowSelection } from "antd/es/table/interface";
+import { useNavigate } from "react-router-dom";
 
 type TableCustomProps = {
   //table
@@ -54,8 +49,9 @@ type TableCustomProps = {
   delete_any_url?: string;
   export_url?: string;
   handleOpenModalAddCustom?: () => void;
-  handleOpenModalEditCustom?: () => Function;
-
+  handleOpenModalEditCustom?: () => void;
+  edit_url_page?:string;
+  edit_url_page_filter_field?:string;
   //operation button
   add_button?: boolean;
   export_button?: boolean;
@@ -79,6 +75,8 @@ const TableCustom: React.FC<TableCustomProps> = ({
   isDeleteOne = true,
   handleOpenModalAddCustom,
   handleOpenModalEditCustom,
+  edit_url_page,
+  edit_url_page_filter_field,
   EditTitle,
   DeleteTitle,
   EditComponent,
@@ -114,6 +112,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [totalPage, setTotalPage] = useState<number>(1)
   const [totalRecord, setTotalRecord] = useState<number>(1)
 
+  const navigate = useNavigate(); 
   useEffect(() => {
     const authValue = localStorage.getItem("auth");
 
@@ -174,9 +173,14 @@ const TableCustom: React.FC<TableCustomProps> = ({
       handleOpenModalEditCustom()
     }
     else{
-      setIdEditRecord(data.id);
-      form.setFieldsValue(data);
-      setIsShowModalEdit(true);
+      if(edit_url_page){
+        navigate(`${edit_url_page}/${data[`${edit_url_page_filter_field}`]}`)
+      }
+      else{
+        setIdEditRecord(data.id);
+        form.setFieldsValue(data);
+        setIsShowModalEdit(true);
+      }
     }
   };
 
