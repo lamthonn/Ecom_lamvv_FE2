@@ -132,10 +132,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
       },
       })
       .then((res: any) => {
-      setTotalRecord(res.data.totalRecord);
-      setCurrentPage(res.data.pageIndex);
-      setTotalPage(res.data.totalPages)
-      setDataTable(res.data.items);
+        setTotalRecord(res.data.totalRecord);
+        setCurrentPage(res.data.pageIndex);
+        setTotalPage(res.data.totalPages);
+        setDataTable(res.data.items);
       })
       .catch((err: any) => {
       console.log("err::", err);

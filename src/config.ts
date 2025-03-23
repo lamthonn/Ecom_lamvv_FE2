@@ -101,7 +101,7 @@ export const menuItem :MenuProps["items"] = [
       ],
     },
     {
-      key: "cau-hinh-he-thong",
+      key: "cau-hinh",
       icon: React.createElement(UserOutlined), 
       label: "Cấu hình hệ thống",
     },

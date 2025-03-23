@@ -13,4 +13,7 @@ export const routesConfig = {
 
     // quản ly khách hàng
     quanLyKhachHang:"/seller-center/quan-ly-khach-hang",
+
+    //cấu hình 
+    cauHinh: "/seller-center/cau-hinh",
 }

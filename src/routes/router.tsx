@@ -10,6 +10,7 @@ import QuanLyDanhMuc from "../pages/admin-page/quan-ly-san-pham/quan-ly-danh-muc
 import DanhSachSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham";
 import ThemSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/them-san-pham";
 import DanhSachKhachHang from "../pages/admin-page/quan-ly-khach-hang/danh-sach-khach-hang";
+import AccountInfo from "../pages/admin-page/cau-hinh";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,16 @@ export const router = createBrowserRouter([
             <DanhSachKhachHang />
           </ProtectedRoute>
           )
+      },
+
+      //cấu hình
+      {
+        path: routesConfig.cauHinh,
+        element: (
+          <ProtectedRoute>
+            <AccountInfo />
+          </ProtectedRoute>
+        )
       }
     ]
   },
