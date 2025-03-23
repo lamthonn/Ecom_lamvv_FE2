@@ -17,10 +17,6 @@ export const menuItem :MenuProps["items"] = [
           key: "dashboard",
           label: "Dashboard",
         },
-        {
-          key: "danh-thu-don-hang",
-          label: "Dashboard",
-        },
       ],
     },
     {
@@ -35,10 +31,6 @@ export const menuItem :MenuProps["items"] = [
         {
           key: "danh-sach-san-pham",
           label: "Danh sách sản phẩm",
-        },
-        {
-          key: "quan-ly-ton-kho",
-          label: "Quản lý tồn kho",
         },
       ],
     },
@@ -88,7 +80,7 @@ export const menuItem :MenuProps["items"] = [
       children: [
         {
           key: "doanh-thu",
-          label: "Quản lý mã giảm giá",
+          label: "Doanh thu",
         },
         {
           key: "so-du",

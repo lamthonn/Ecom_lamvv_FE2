@@ -4,7 +4,6 @@ import {
   Collapse,
   Divider,
   Row,
-  Space,
   Spin,
   Table,
   Typography,
@@ -20,13 +19,16 @@ import FormSelect from "../../../../../components/form-select/FormSelect";
 import FormAreaCustom from "../../../../../components/text-area/FormTextArea";
 import ButtonCustom from "../../../../../components/button/button";
 import FormInputNumber from "../../../../../components/form-input-number/FormInputNumber";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { routesConfig } from "../../../../../routes/routes";
 import {
   axiosConfig,
   axiosConfigUpload,
+  BASE_URL,
 } from "../../../../../config/configApi";
-import axios from "axios";
+import { UploadFile } from "antd/lib";
+import { UploadFileStatus } from "antd/es/upload/interface";
+import { RcFile } from "antd/lib/upload";
 type tuyChonPhanLoaiProps = {
   key: number;
   tuy_chon_phan_loai?: any;
@@ -40,12 +42,12 @@ interface DataSourceItem {
   mau_sac?: any;
   kich_thuoc?: any;
   gia?: number;
-  khuyen_mai?:number;
+  khuyen_mai?: number;
   so_luong?: number;
   sku?: string;
   [key: string]: any;
 }
-const ThemSanPham: React.FC = () => {
+const SuaSanPham: React.FC = () => {
   const labelStyle: CSSProperties = {
     fontWeight: "bold",
     fontSize: "20px",
@@ -55,8 +57,8 @@ const ThemSanPham: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   //thông tin sản phẩm
-  const [fileList, setFileList] = useState([]);
-  const [fileAnhBia, setFileAnhBia] = useState([]);
+  const [fileList, setFileList] = useState<UploadFile<any>[]>([]);
+  const [fileAnhBia, setFileAnhBia] = useState<UploadFile<any>[]>([]);
   const [maSanPham, setMaSanPham] = useState<string>("");
   const [tenSanPham, setTenSanPham] = useState<string>("");
   const [xuatXu, setXuatXu] = useState<string>("");
@@ -64,7 +66,6 @@ const ThemSanPham: React.FC = () => {
   const [moTa, setMoTa] = useState<string>("");
 
   //thông tin bán hàng
-
   const handleChange = ({ fileList }: any) => {
     if (fileList.length > 9) {
       ShowToast("warning", "Thông báo", "Tối đa có thể tải lên 9 ảnh", 3);
@@ -246,7 +247,7 @@ const ThemSanPham: React.FC = () => {
       key: item.ten_phan_loai,
       width: 250,
       render: (text: any, record: any, index: any) => ({
-        children: text,
+        children: text || record[item.ten_phan_loai],
         props: {
           rowSpan:
             item.ten_phan_loai === "mau-sac"
@@ -262,6 +263,7 @@ const ThemSanPham: React.FC = () => {
       render: (text: any, record: any) => (
         <>
           <FormInputNumber
+            value={record.gia}
             style={{ width: "100%" }}
             afterPrefixIcon="VND"
             onChange={(value: number | null, values: string | null) => {
@@ -283,12 +285,15 @@ const ThemSanPham: React.FC = () => {
       render: (text: any, record: any) => (
         <>
           <FormInputNumber
+            value={record.khuyen_mai}
             style={{ width: "100%" }}
             afterPrefixIcon="VND"
             onChange={(value: number | null, values: string | null) => {
               if (value !== null) {
                 const updatedDataSource = dataSource.map((item, index) =>
-                  item.key === record.key ? { ...item, khuyen_mai: value } : item
+                  item.key === record.key
+                    ? { ...item, khuyen_mai: value }
+                    : item
                 );
                 setDataSource(updatedDataSource);
               }
@@ -304,6 +309,7 @@ const ThemSanPham: React.FC = () => {
       render: (text: any, record: any) => (
         <>
           <FormInputNumber
+            value={record.so_luong}
             style={{ width: "100%" }}
             onChange={(value: number | null, values: string | null) => {
               if (value !== null) {
@@ -324,7 +330,7 @@ const ThemSanPham: React.FC = () => {
       render: (text: any, record: any) => (
         <>
           <FormItemInput
-            value={text}
+            value={record.sku}
             onChange={(e: any) => {
               const updatedDataSource = dataSource.map((item, index) => {
                 return item.key === record.key
@@ -382,24 +388,34 @@ const ThemSanPham: React.FC = () => {
     mauSac.forEach((mau: any) => {
       if (kichThuoc.length > 0) {
         kichThuoc.forEach((size: any) => {
+          const existingItem = dataSource.find(
+            (item) =>
+              item["mau-sac"] === mau.tuy_chon_phan_loai &&
+              item.size === size.tuy_chon_phan_loai
+          );
+
           arr.push({
-            key: `${Math.random()}`,
+            key: existingItem?.key || `${Math.random()}`,
             "mau-sac": mau.tuy_chon_phan_loai,
             size: size.tuy_chon_phan_loai,
-            gia: undefined,
-            khuyen_mai: undefined,
-            so_luong: undefined,
-            sku: undefined,
+            gia: existingItem?.gia || undefined,
+            khuyen_mai: existingItem?.khuyen_mai || undefined,
+            so_luong: existingItem?.so_luong || undefined,
+            sku: existingItem?.sku || undefined,
           });
         });
       } else {
+        const existingItem = dataSource.find(
+          (item) => item["mau-sac"] === mau.tuy_chon_phan_loai
+        );
+
         arr.push({
-          key: Math.random(),
+          key: existingItem?.key || `${Math.random()}`,
           "mau-sac": mau.tuy_chon_phan_loai,
-          khuyen_mai: undefined,
-          gia: undefined,
-          so_luong: undefined,
-          sku: undefined,
+          khuyen_mai: existingItem?.khuyen_mai || undefined,
+          gia: existingItem?.gia || undefined,
+          so_luong: existingItem?.so_luong || undefined,
+          sku: existingItem?.sku || undefined,
         });
       }
     });
@@ -624,7 +640,95 @@ const ThemSanPham: React.FC = () => {
     },
   ];
   //#endregion
+  const { ma_san_pham } = useParams<{ ma_san_pham: string }>();
+  const fetchAndConvertImage = async (
+    imageUrl: string,
+    fileName: string
+  ): Promise<UploadFile<any> | null> => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], fileName, { type: blob.type });
+
+      return {
+        uid: `${Math.random()}`, // Để tránh lỗi key
+        name: fileName,
+        status: "done",
+        url: imageUrl, // Giữ URL hiển thị preview
+        originFileObj: file as RcFile, // Quan trọng để gửi lên server
+      };
+    } catch (error) {
+      console.error("Lỗi khi tải ảnh:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    setLoading(true);
+    axiosConfig
+      .get(`api/DanhSachSanPham/get-by-ma/${ma_san_pham}`)
+      .then(async (res: any) => {
+        var dataSP = res.data[0];
+        var dataBienThe = res.data;
+
+        setMaSanPham(dataSP.ma_san_pham);
+        setTenSanPham(dataSP.ten_san_pham);
+        setDanhMuc(dataSP.danh_muc_id);
+        setXuatXu(dataSP.xuat_xu);
+        setMoTa(dataSP.mo_ta);
+        const fileName = dataSP.duong_dan_anh_bia.split("/").pop() || "image.jpg";
+        const convertFile = await fetchAndConvertImage(
+          `${BASE_URL}/${dataSP.duong_dan_anh_bia}`,
+          fileName
+        );
+        var anhBia: UploadFile<any>[] = convertFile ? [convertFile] : [];
+        var anhSanPham = await Promise.all(
+          dataSP.ds_anh_san_pham.map(async (item: any) => {
+            const fileName = item.split("/").pop() || "image.jpg";
+            return await fetchAndConvertImage(
+              `${BASE_URL}/${item}`,
+              fileName
+            );
+          })
+        );
+
+        setFileList(anhSanPham);
+        setFileAnhBia(anhBia);
+        var phan_loai = dataSP.ls_phan_loai.map((item: any) => {
+          return {
+            ten_phan_loai: item.ten_phan_loai,
+            phan_loai: item.phan_loai.map((pl: any, index: any) => {
+              return {
+                key: index,
+                tuy_chon_phan_loai: pl,
+              };
+            }),
+          };
+        });
+        set_phan_loai(phan_loai);
+
+        var dataSrc = dataBienThe.map((item: any, index: any) => {
+          return {
+            key: index,
+            "mau-sac": item.mau_sac,
+            size: item.size,
+            khuyen_mai: item.khuyen_mai,
+            gia: item.gia,
+            so_luong: item.so_luong,
+            sku: item.sku,
+          };
+        });
+
+        setDataSource(dataSrc);
+      })
+      .catch((err: any) => {
+        ShowToast("error", "Thông báo", "có lỗi xảy ra", 3);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
   const navigate = useNavigate();
+
   const handleOk = async () => {
     setLoading(true);
     //lưu ảnh trước => trả ra đường dẫn => lưu data sản phẩm
@@ -641,64 +745,58 @@ const ThemSanPham: React.FC = () => {
       }
     });
 
-    try {
-      //gọi api thêm ảnh bìa => trả ra url của ảnh bìa => add vào api thêm sản phẩm
-      await axiosConfigUpload
-        .post("api/DanhSachSanPham/add-cover-image", formData)
-        .then((res: any) => {
-          const newdata = dataSource.map((item: any) => {
-            return {
-              danh_muc_id: danhMuc,
-              ma_san_pham: maSanPham,
-              ten_san_pham: tenSanPham,
-              mo_ta: moTa,
-              xuat_xu: xuatXu,
-              mau_sac: item["mau-sac"],
-              size: item["size"],
-              gia: item.gia,
-              khuyen_mai: item.khuyen_mai,
-              so_luong: item.so_luong,
-              sku: item.sku,
-              duong_dan_anh_bia: res.data,
-            };
-          });
+    const formDataToSend = new FormData();
+    if (ma_san_pham) {
+      formDataToSend.append("ma", ma_san_pham);
+    } else {
+      console.error("ma_san_pham is undefined");
+    }
 
-          axiosConfig.post("api/DanhSachSanPham/create", newdata).then(() => {
-            //lưu list ảnh sản phẩm vào sản phẩm
-            axiosConfigUpload
-              .post("api/DanhSachSanPham/add-list-image", formDataMuti, {
-                headers: { "Content-Type": "multipart/form-data" },
-              })
-              .then((resData:any) => {
-                axiosConfig.post("api/DanhSachSanPham/add-image-files", {
-                    filePath: resData.data,
-                    ma: maSanPham,
-                  })
-                  .then((res: any) => {
-                    ShowToast(
-                      "success",
-                      "Thông báo",
-                      "Thêm sản phẩm thành công",
-                      3
-                    );
-                    navigate(routesConfig.quanLySanPham);
-                  })
-                  .catch((err: any) => {
-                    ShowToast("error", "Thông báo", `Có lỗi xảy ra: ${err}`, 3);
-                  });
-              })
-              .catch(() => {
-                ShowToast(
-                  "error",
-                  "Thông báo",
-                  `Có lỗi xảy ra khi tải danh sách ảnh`,
-                  3
-                );
-              });
-          });
+    fileAnhBia.forEach((file: any) => {
+      if (file.originFileObj) {
+        formDataToSend.append("anh_bia", file.originFileObj);
+      }
+    });
+
+    fileList.forEach((file: any) => {
+      if (file.originFileObj) {
+        formDataToSend.append("ls_anh_san_pham", file.originFileObj);
+      }
+    });
+
+    formDataToSend.append(
+      "data_san_pham",
+      JSON.stringify(
+        dataSource.map((item: any) => {
+          return {
+            danh_muc_id: danhMuc || null,
+            ma_san_pham: maSanPham || null,
+            ten_san_pham: tenSanPham || null,
+            mo_ta: moTa || null,
+            xuat_xu: xuatXu || null,
+            mau_sac: item["mau-sac"] || null,
+            size: item["size"] || null,
+            gia: item.gia || null,
+            khuyen_mai: item.khuyen_mai || null,
+            so_luong: item.so_luong || null,
+            sku: item.sku || null,
+          };
         })
-        .catch((err: any) => {
-          ShowToast("error", "Thông báo", `Có lỗi xảy ra: ${err}`, 3);
+      )
+    );
+
+    try {
+      axiosConfigUpload.put("api/DanhSachSanPham/update-san-pham", formDataToSend, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
+          ShowToast("success", "Thông báo", "Cập nhật sản phẩm thành công", 3);
+          navigate(routesConfig.quanLySanPham);
+        })
+        .catch(() => {
+          ShowToast("error", "Thông báo", "Cập nhật sản phẩm thất bại", 3);
         })
         .finally(() => {
           setLoading(false);
@@ -709,9 +807,10 @@ const ThemSanPham: React.FC = () => {
     }
     return false;
   };
+
   return (
     <>
-      <MainLayout label="Thêm mới sản phẩm">
+      <MainLayout label="Cập nhật sản phẩm">
         <Spin spinning={loading}>
           <Collapse
             bordered={false}
@@ -757,4 +856,4 @@ const ThemSanPham: React.FC = () => {
   );
 };
 
-export default ThemSanPham;
+export default SuaSanPham;

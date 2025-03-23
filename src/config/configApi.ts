@@ -15,7 +15,14 @@ export const axiosCustom: any = axios.create({
     "Content-Type": "application/json",
   },
 });
-
+export const axiosConfigUpload: any = axios.create({
+  baseURL: BASE_URL,
+  timeout: 1000 * 60 * 60 * 10,
+  withCredentials: false,
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+});
 export const axiosConfig: any = axios.create({
     baseURL: BASE_URL,
     timeout: 1000 * 60 * 60 * 10,

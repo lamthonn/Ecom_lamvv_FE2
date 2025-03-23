@@ -38,28 +38,35 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
         },
         {
           title: "Giá khuyến mãi",
-          render: (item: any) => <>{item.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</>,
+          render: (item: any) => <>{item ? item.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : ""}</>,
           dataIndex: "khuyen_mai",
         },
         {
           title: "Số lượng",
-          dataIndex: "khuyen_mai",
+          dataIndex: "so_luong",
+          render: (item: any) => {
+            return item < 11 ? (<div style={{color:"red"}}>{item}</div>) : (<>{item}</>)
+          },
         },
         {
           title: "Trạng thái",
-          dataIndex: "is_active ",
+          dataIndex: "is_active",
           render: (item: any) => <>{item === true ? "Hoạt động" : "Không hoạt động"}</>,
         },
         {
           title: "Ngày tạo",
           dataIndex: "created",
-          render: (item: any) => <>{formatDate(item)}</>,
+          render: (item: any) => {
+            return <>{formatDate(item)}</>
+          },
         },
       ];
 
     const handleAddSanPham =() => {
       navigate(`${routesConfig.themMoiSanPham}`)
     }
+
+    
     return (
         <div>
             <MainLayout label="Quản lý danh sách sản phẩm">
@@ -67,11 +74,16 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
                     columns={columns}
                     DeleteTitle="Xóa sản phẩm"
                     get_list_url="/api/DanhSachSanPham/get-all"
+                    edit_url_page={routesConfig.suaSanPham}
+                    edit_url_page_filter_field="ma_san_pham"
                     handleOpenModalAddCustom={handleAddSanPham}
+                    delete_one_url="/api/DanhSachSanPham/delete"
+                    delete_any_url="/api/DanhSachSanPham/delete-any"
+                    export_url="/api/DanhSachSanPham/export"
                     searchComponent={
                       <Row gutter={16}>
                         <Col span={8}>
-                          <Form.Item name="ma_danh_muc">
+                          <Form.Item name="ma_san_pham">
                             <FormItemInput
                               label="Mã danh mục"
                               style={{ width: "100%" }}
@@ -79,7 +91,7 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
                           </Form.Item>
                         </Col>
                         <Col span={8}>
-                          <Form.Item name="ten_danh_muc">
+                          <Form.Item name="ten_san_pham">
                             <FormItemInput
                               label="Tên danh mục"
                               style={{ width: "100%" }}
