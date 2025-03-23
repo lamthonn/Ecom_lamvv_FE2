@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { ConfigProvider, DatePicker, Form, Typography } from "antd";
 import { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
 import dayjs, { Dayjs } from "dayjs";
@@ -12,13 +12,13 @@ type DatePickerComponentProps = {
     label?: string;
     placeholder?: string;
     placeholderRange?: string[];
-    value?: Dayjs | [Dayjs, Dayjs] | null; // Single or Range date picker value
-    onChange?: DatePickerProps["onChange"] | RangePickerProps["onChange"]; // Change handler for single or range
+    value?: string[] | [Dayjs, Dayjs] | null; // Chấp nhận chuỗi hoặc Dayjs
+    onChange?: DatePickerProps["onChange"] | RangePickerProps["onChange"];
     disabled?: boolean;
     style?: any;
-    format?: string; // Date format (e.g., "YYYY-MM-DD")
+    format?: string;
     picker?: "week" | "month" | "quarter" | "year";
-    mode?: "date" | "range"; // Mode for date or range selection
+    mode?: "date" | "range";
     allowClear?: boolean;
     defaultValue?: Dayjs;
     limit?: number | null;
@@ -35,82 +35,36 @@ const DatePickerCustomOld: FunctionComponent<DatePickerComponentProps> = ({
     onChange,
     disabled,
     style,
-    format = "DD/MM/YYYY", // Default format
-    mode = "date", // Default to single date picker
+    format = "DD/MM/YYYY",
+    mode = "date",
     allowClear = true,
-    defaultValue,
     limit,
     onlyDate = true,
-    picker,
-    ...rest
+    picker
 }) => {
 
-    placeholderRange = ["Bắt đầu", "Kết thúc"];
-    const onCalendarChange = (dates: any, dateStrings: any, info: any) => {
-        debugger
-        if (dates && dates[0] && dates[1]) {
-          // Chỉ lưu khi cả start và end đều đã chọn
-          const updatedDates = [
-            dates[0],
-            dates[1],
-          ];
-          const [start, end] = updatedDates;
-      
-          if (limit && end.diff(start, 'day') > limit) {
-            ShowToast('error', `Thông báo`, `Khoảng thời gian tối đa có thể chọn là ${limit} ngày`, 6);
-          } else {
-            
-            onChange?.(dates, [start.format(format), end.format(format)]);
-          }
-        }
-      }
+    // Chuyển đổi value từ string[] sang Dayjs[]
+    let convertedValue: [Dayjs, Dayjs] | null = null;
+    if (value && Array.isArray(value) && value.length === 2) {
+        convertedValue = [dayjs(value[0]), dayjs(value[1])];
+    }
 
     const onRangeChange = (dates: any) => {
-        debugger
-        if (dates) {
+        if (dates && dates[0] && dates[1]) {
             const [start, end] = dates;
-            const diff = end.diff(start, 'day'); // Tính số ngày
+            const diff = end.diff(start, 'day');
 
-
-
-            if (picker === undefined) {
-                if (limit && diff > limit) {
-                    ShowToast('error', `Có lỗi xảy ra`, `Khoảng thời gian tối đa có thể chọn là ${limit} ngày`, 6);
-                    onChange?.(start, [start, start])
-                }
-                else {
-                    if (onChange) {
-                        try {
-                            onChange(dates, [start.format(format).add(7, 'hour'), end.format(format).add(7, 'hour')]);
-                        }
-                        catch {
-                            onChange(dates, [start.format(format), end.format(format)]);
-                        }
-                    }
-                }
+            if (limit && diff > limit) {
+                ShowToast('error', `Có lỗi xảy ra`, `Khoảng thời gian tối đa có thể chọn là ${limit} ngày`, 6);
+                onChange?.(start, [start, start]);
+            } else {
+                onChange?.(dates, [start.format(format), end.format(format)]);
             }
-            else {
-                if (onChange) {
-                    try {
-                        onChange(dates, [start.format(format).add(7, 'hour'), end.format(format).add(7, 'hour')]);
-                    }
-                    catch {
-                        onChange(dates, [start.format(format), end.format(format)]);
-                    }
-                }
-            }
-
-
+        } else {
+            onChange?.(null as any, null as any);
+            ShowToast('error', `Có lỗi xảy ra`, `Giá trị không hợp lệ`, 6);
         }
-        else {
-            if (onChange) {
-                onChange(null as any, null as any); // Set null nếu không có dates
-            }
-            else {
-                ShowToast('error', `Có lỗi xảy ra`, `Giá trị không hợp lệ`, 6)
-            }
-        }
-    }
+    };
 
     return (
         <ConfigProvider locale={viVN}>
@@ -118,10 +72,9 @@ const DatePickerCustomOld: FunctionComponent<DatePickerComponentProps> = ({
             {mode === "range" ? (
                 <RangePicker
                     placeholder={[placeholderRange[0], placeholderRange[1]]}
-                    value={value as [Dayjs, Dayjs]}
+                    value={convertedValue}
                     onChange={onRangeChange}
                     disabled={disabled}
-                    onCalendarChange={onCalendarChange}
                     style={style}
                     format={format}
                     showTime={onlyDate ? false : { format: 'HH' }}
@@ -131,19 +84,14 @@ const DatePickerCustomOld: FunctionComponent<DatePickerComponentProps> = ({
             ) : (
                 <DatePicker
                     placeholder={placeholder ?? placeholderRange[0]}
-                    value={value as Dayjs}
+                    value={convertedValue ? convertedValue[0] : null}
                     onChange={onChange as DatePickerProps["onChange"]}
                     disabled={disabled}
-                    defaultValue={defaultValue}
                     style={style}
                     format={format}
-                    showTime={onlyDate ? false : {
-                        format: 'HH', // Chỉ hiển thị giờ
-                        hourStep: 1, // Bước nhảy của giờ (có thể thay đổi nếu cần)
-                    }}
+                    showTime={onlyDate ? false : { format: 'HH' }}
                     allowClear={allowClear}
                     picker={picker}
-                //{...rest} // loi die page
                 />
             )}
         </ConfigProvider>

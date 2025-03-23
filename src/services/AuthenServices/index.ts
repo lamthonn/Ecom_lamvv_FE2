@@ -19,3 +19,18 @@ export const loginAdmin: (body: any) => Promise<AxiosResponse<any> | null> = asy
 export const refreshToken: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
   return axiosCustom.post("/api/Authen/RefreshToken/refresh-token", body);
 };
+
+export const UpdatePassword: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
+  return axiosConfig.put("/api/Authen/UpdatePassword", body);
+};
+
+export const UpdateEmail: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
+  return axiosConfig.put("/api/Authen/UpdateEmail", body);
+};
+
+export const UpdatePhone: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
+  return axiosConfig.put("/api/Authen/UpdatePhone", body);
+};
+export const getDetailAcc: () => Promise<AxiosResponse<any>> = () => {
+  return axiosConfig.get("/api/Authen/getDetailAcc");
+};

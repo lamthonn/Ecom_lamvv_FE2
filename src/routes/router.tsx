@@ -14,6 +14,8 @@ import SuaSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/
 import NhapKho from "../pages/admin-page/van-hanh/nhap-kho";
 import DonHang from "../pages/admin-page/van-hanh/don-hang";
 import AccountInfo from "../pages/admin-page/cau-hinh";
+import DanhSachMaGiamGia from "../pages/admin-page/quan-ly-ma-giam-gia/danh-sach";
+import DanhSachChuongTrinhMarketing from "../pages/admin-page/quan-ly-chuong-trinh-marketing/danh-sach";
 
 export const router = createBrowserRouter([
   {
@@ -86,6 +88,25 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+      // quản lý mã giảm giá
+      {
+        path: routesConfig.quanLyMaGiamGia,
+        element: (
+          <ProtectedRoute>
+            <DanhSachMaGiamGia />
+          </ProtectedRoute>
+        )
+      },
+
+      // quản lý chương trình mar
+      {
+        path: routesConfig.chuongTrinhMarketing,
+        element: (
+          <ProtectedRoute>
+            <DanhSachChuongTrinhMarketing />
+          </ProtectedRoute>
+        )
+      },
 
       //vận hành
       {
@@ -103,9 +124,6 @@ export const router = createBrowserRouter([
             <DonHang />
           </ProtectedRoute>
         ),
-      },
-    ],
-          )
       },
 
       //cấu hình
