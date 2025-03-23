@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
 
 export const formatDate = (dateString: any): string => {
-  return dayjs(dateString).format('DD/MM/YYYY HH:mm:ss');
+  return dateString ? dayjs(dateString).format('DD/MM/YYYY HH:mm:ss') : "";
 };

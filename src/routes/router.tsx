@@ -13,6 +13,7 @@ import DanhSachKhachHang from "../pages/admin-page/quan-ly-khach-hang/danh-sach-
 import SuaSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/sua-san-pham";
 import NhapKho from "../pages/admin-page/van-hanh/nhap-kho";
 import DonHang from "../pages/admin-page/van-hanh/don-hang";
+import ChiTietPhieuNhap from "../pages/admin-page/van-hanh/nhap-kho/chi-tiet-phieu/CtPhieuNhap";
 
 export const router = createBrowserRouter([
   {
@@ -92,6 +93,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <NhapKho />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: `${routesConfig.chiTietPhieuNhap}/:id`,
+        element: (
+          <ProtectedRoute>
+            <ChiTietPhieuNhap />
           </ProtectedRoute>
         ),
       },

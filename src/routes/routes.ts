@@ -10,6 +10,8 @@ export const routesConfig = {
     quanLyKhachHang:"/seller-center/quan-ly-khach-hang",
     //Vận hành
     nhapKho:"/seller-center/nhap-kho",
+    chiTietPhieuNhap:"/seller-center/sua-phieu-nhap",
+    themPhieuNhap:"/seller-center/chi-tiet-phieu-nhap",
     quanLyDonHang:"/seller-center/quan-ly-don-hang",
     //marketing
     quanLyMaGiamGia:"/seller-center/quan-ly-ma-giam-gia",
