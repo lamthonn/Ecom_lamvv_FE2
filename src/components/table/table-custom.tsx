@@ -57,10 +57,11 @@ type TableCustomProps = {
   export_button?: boolean;
   delete_button?: boolean;
   isCheckable?: boolean;
-
+  param_export?: any;
   //MODAL
   isShowButtonEdit?: boolean;
   isShowButtonAdd?: boolean;
+  isSearchGeneral?: boolean;
 
   //search
   searchComponent?: React.ReactNode;
@@ -96,6 +97,8 @@ const TableCustom: React.FC<TableCustomProps> = ({
   searchComponent,
   rowKey = "id",
   export_url,
+  param_export,
+  isSearchGeneral = false
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState<boolean>(false);
@@ -133,10 +136,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
       },
       })
       .then((res: any) => {
-      setTotalRecord(res.data.totalRecord);
-      setCurrentPage(res.data.pageIndex);
-      setTotalPage(res.data.totalPages)
-      setDataTable(res.data.items);
+        setTotalRecord(res.data.totalRecord);
+        setCurrentPage(res.data.pageIndex);
+        setTotalPage(res.data.totalPages);
+        setDataTable(res.data.items);
       })
       .catch((err: any) => {
       console.log("err::", err);
@@ -401,6 +404,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const handleSearch = () => {
     setLoading(true);
     const dataQuery = formSearch.getFieldsValue();
+    
     if (dataQuery.created) {
       const [fromdate, todate] = dataQuery.created;
       dataQuery.fromDate = fromdate ? fromdate.format("YYYY-MM-DD") : undefined;
@@ -408,8 +412,18 @@ const TableCustom: React.FC<TableCustomProps> = ({
       delete dataQuery.created; // Remove the original created field
     }
 
+    const keySearch = JSON.stringify(dataQuery);
+    var params;
+    if(isSearchGeneral) {
+      params = {
+          keySearch: keySearch
+      };
+    }
+    else {
+      params = dataQuery 
+    }
     axiosConfig
-      .get(get_list_url, { params: dataQuery })
+      .get(get_list_url, { params })
       .then((res: any) => {
         setDataTable(res.data.items);
       })
@@ -423,7 +437,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
 
   const handelExportExcel = async () => {
     await axiosConfig
-      .post(`${export_url}`,dataSource ? dataSource : dataTable, { responseType: "blob" })
+      .post(`${export_url}`,param_export ? param_export : (dataSource ? dataSource : dataTable), { responseType: "blob" })
       .then((res: any) => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");

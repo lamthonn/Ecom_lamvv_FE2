@@ -8,6 +8,9 @@ export const routesConfig = {
     suaSanPham:"/seller-center/sua-san-pham",
     // quản ly khách hàng
     quanLyKhachHang:"/seller-center/quan-ly-khach-hang",
+
+    //cấu hình 
+    cauHinh: "/seller-center/cau-hinh",
     //Vận hành
     nhapKho:"/seller-center/nhap-kho",
     chiTietPhieuNhap:"/seller-center/sua-phieu-nhap",
