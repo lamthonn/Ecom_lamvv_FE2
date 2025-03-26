@@ -122,7 +122,15 @@ export const router = createBrowserRouter([
         path: `${routesConfig.chiTietPhieuNhap}/:id`,
         element: (
           <ProtectedRoute>
-            <ChiTietPhieuNhap />
+            <ChiTietPhieuNhap label="Sửa yêu cầu nhập kho" type="edit"/>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: `${routesConfig.themPhieuNhap}`,
+        element: (
+          <ProtectedRoute>
+            <ChiTietPhieuNhap label="Thêm mới yêu cầu nhập kho" type="add"/>
           </ProtectedRoute>
         ),
       },

@@ -13,7 +13,7 @@ type FormItemInputProps = {
   placeholder?: string;
   suffix?: ReactNode | string;
   readOnly?: boolean;
-  value?: string | string[];
+  value?: string | string[] | number;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   passwordInput?: boolean;
   onKeyPress?: (e: KeyboardEvent<HTMLInputElement>) => void;

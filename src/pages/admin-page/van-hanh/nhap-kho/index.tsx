@@ -1,5 +1,6 @@
-import { Col, Form, Row, Spin } from "antd";
-import React, { useState } from "react";
+import { Col, Form, Modal, Row, Spin } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
 import TableCustom from "../../../../components/table/table-custom";
 import { formatDate } from "../../../../config/common";
@@ -12,6 +13,7 @@ type NhapKhoProps = {};
 
 const NhapKho: React.FC<NhapKhoProps> = ({}) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [reacordDetail, setReacordDetail] = useState<any>();
   const navigate = useNavigate();
   const columns = [
     {
@@ -61,6 +63,16 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
       render: (item: any) => <>{formatDate(item)}</>,
     },
   ];
+
+  const handleOpenDetailModalCustom =() => {
+
+  }
+
+  useEffect(()=> {
+    console.log("reacordDetail:: ", reacordDetail);
+    
+  },[reacordDetail])
+
   return (
     <MainLayout label="Danh sách yêu cầu nhập kho">
       <Spin spinning={loading}>
@@ -70,8 +82,15 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
           delete_one_url="/api/phieu-nhap-kho"
           export_url="/api/phieu-nhap-kho/export"
           handleOpenModalAddCustom={()=>navigate(routesConfig.themPhieuNhap)}
+          otherAction ={
+            <InboxOutlined
+                className="action-table-1"
+              />
+          }
           edit_url_page={routesConfig.chiTietPhieuNhap}
           edit_url_page_filter_field="id"
+          setRecord={setReacordDetail}
+          action_width={120}
           searchComponent={
             <Row gutter={16}>
               <Col span={8}>
@@ -104,6 +123,10 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
           }
         />
       </Spin>
+
+      <Modal >
+
+      </Modal>
     </MainLayout>
   );
 };

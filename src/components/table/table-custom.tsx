@@ -32,6 +32,7 @@ type TableCustomProps = {
   setCurrent?: (val: any) => void;
   dataSource?: any;
   rowKey?: string;
+  otherAction?: React.ReactNode;
 
   //action
   isViewDetail?: boolean;
@@ -50,8 +51,11 @@ type TableCustomProps = {
   export_url?: string;
   handleOpenModalAddCustom?: () => void;
   handleOpenModalEditCustom?: () => void;
-  edit_url_page?:string;
-  edit_url_page_filter_field?:string;
+  handleDeleteCustom?: () => void;
+  setSelected?: React.Dispatch<React.SetStateAction<any>>
+  setRecord?: React.Dispatch<React.SetStateAction<any>>
+  edit_url_page?: string;
+  edit_url_page_filter_field?: string;
   //operation button
   add_button?: boolean;
   export_button?: boolean;
@@ -71,11 +75,15 @@ const TableCustom: React.FC<TableCustomProps> = ({
   columns,
   setCurrent,
   dataSource,
+  otherAction,
   isViewDetail = false,
   isEditOne = true,
   isDeleteOne = true,
   handleOpenModalAddCustom,
   handleOpenModalEditCustom,
+  handleDeleteCustom,
+  setSelected,
+  setRecord,
   edit_url_page,
   edit_url_page_filter_field,
   EditTitle,
@@ -98,7 +106,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   rowKey = "id",
   export_url,
   param_export,
-  isSearchGeneral = false
+  isSearchGeneral = false,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState<boolean>(false);
@@ -111,11 +119,11 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [dataTable, setDataTable] = useState<any>([]);
 
   //phân trang
-  const [curentPage, setCurrentPage] = useState<number>(1)
-  const [totalPage, setTotalPage] = useState<number>(1)
-  const [totalRecord, setTotalRecord] = useState<number>(1)
+  const [curentPage, setCurrentPage] = useState<number>(1);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [totalRecord, setTotalRecord] = useState<number>(1);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   useEffect(() => {
     const authValue = localStorage.getItem("auth");
 
@@ -126,14 +134,14 @@ const TableCustom: React.FC<TableCustomProps> = ({
   }, []);
 
   //get data
-  const getData = (curentPage:number, pageSize:number) => {
+  const getData = (curentPage: number, pageSize: number) => {
     setLoading(true);
     axiosConfig
       .get(get_list_url, {
-      params: {
-        pageNumber: curentPage,
-        pageSize: pageSize,
-      },
+        params: {
+          pageNumber: curentPage,
+          pageSize: pageSize,
+        },
       })
       .then((res: any) => {
         setTotalRecord(res.data.totalRecord);
@@ -142,10 +150,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
         setDataTable(res.data.items);
       })
       .catch((err: any) => {
-      console.log("err::", err);
+        console.log("err::", err);
       })
       .finally(() => {
-      setLoading(false);
+        setLoading(false);
       });
   };
 
@@ -159,27 +167,24 @@ const TableCustom: React.FC<TableCustomProps> = ({
   ) => {
     setPageSize(pageSize);
     setCurrent?.(current);
-    getData(current, pageSize)
+    getData(current, pageSize);
   };
 
   //thay đổi pazeSize
   const onChange: PaginationProps["onChange"] = (page) => {
     setCurrent?.(page);
-    getData(page, pageSize)
+    getData(page, pageSize);
   };
 
   //mở modal edit
   const [idEditRecord, setIdEditRecord] = useState<string | null>(null);
   const handleOpenEditModal = (data: any) => {
-    if(handleOpenModalEditCustom)
-    {
-      handleOpenModalEditCustom()
-    }
-    else{
-      if(edit_url_page){
-        navigate(`${edit_url_page}/${data[`${edit_url_page_filter_field}`]}`)
-      }
-      else{
+    if (handleOpenModalEditCustom) {
+      handleOpenModalEditCustom();
+    } else {
+      if (edit_url_page) {
+        navigate(`${edit_url_page}/${data[`${edit_url_page_filter_field}`]}`);
+      } else {
         setIdEditRecord(data.id);
         form.setFieldsValue(data);
         setIsShowModalEdit(true);
@@ -260,23 +265,27 @@ const TableCustom: React.FC<TableCustomProps> = ({
 
   //delete one confirm
   const handleDeleteConfirm = (data: any) => {
-    Modal.confirm({
-      title: DeleteTitle ? DeleteTitle : "Xoá dữ liệu",
-      centered: true,
-      icon: <WarningOutlined />,
-      content: <p>Bạn chắc chắn muốn xóa</p>,
-      className: "modal-custom danger",
-      okButtonProps: {
-        className: "btn btn-filled--danger",
-      },
-      cancelButtonProps: {
-        className: "btn btn-outlined",
-      },
-      okText: "Xác nhận",
-      cancelText: "Huỷ",
-      onOk: () => handleDeleteOne(data),
-      onCancel: () => {},
-    });
+    if (handleDeleteCustom) {
+      handleDeleteCustom?.();
+    } else {
+      Modal.confirm({
+        title: DeleteTitle ? DeleteTitle : "Xoá dữ liệu",
+        centered: true,
+        icon: <WarningOutlined />,
+        content: <p>Bạn chắc chắn muốn xóa</p>,
+        className: "modal-custom danger",
+        okButtonProps: {
+          className: "btn btn-filled--danger",
+        },
+        cancelButtonProps: {
+          className: "btn btn-outlined",
+        },
+        okText: "Xác nhận",
+        cancelText: "Huỷ",
+        onOk: () => handleDeleteOne(data),
+        onCancel: () => {},
+      });
+    }
   };
 
   const handleDeleteOne = (record: any) => {
@@ -343,12 +352,11 @@ const TableCustom: React.FC<TableCustomProps> = ({
     });
   };
 
-
   const customColumn = [
     {
       title: "STT",
       dataIndex: "stt",
-      fixed: 'left' as 'left',
+      fixed: "left" as "left",
       key: "stt",
       width: 5,
 
@@ -356,44 +364,53 @@ const TableCustom: React.FC<TableCustomProps> = ({
         ((curentPage ?? 1) - 1) * pageSize + index + 1,
     },
     ...(columns || []),
-    {
-      title: "Thao tác",
-      key: "action",
-      width: action_width,
-      fixed: 'right' as 'right',
-      render: (text: any, record: any) => (
-        <div className="action-table">
-          {isViewDetail ? (
-            <EyeOutlined
-              className="action-table-edit"
-              onClick={() => handleOpenEditModal(record)}
-            />
-          ) : null}
+    ...(isEditOne === false && isViewDetail === false && isDeleteOne === false
+      ? []
+      : [
+          {
+            title: "Thao tác",
+            key: "action",
+            width: action_width,
+            fixed: "right" as "right",
+            render: (text: any, record: any) => (
+              <div className="action-table">
+                {otherAction ? (
+                  <div onClick={()=> setRecord?.(record)}>
+                    {otherAction}
+                  </div>
+                ) : null}
 
-          {isEditOne ? (
-            <EditOutlined
-              className="action-table-edit"
-              onClick={() => handleOpenEditModal(record)}
-            />
-          ) : null}
+                {isViewDetail ? (
+                  <EyeOutlined
+                    className="action-table-edit"
+                    onClick={() => handleOpenEditModal(record)}
+                  />
+                ) : null}
 
-          {isDeleteOne ? (
-            <DeleteOutlined
-              className="action-table-delete"
-              onClick={() => handleDeleteConfirm(record)}
-            />
-          ) : null}
-        </div>
-      ),
-    },
+                {isEditOne ? (
+                  <EditOutlined
+                    className="action-table-edit"
+                    onClick={() => handleOpenEditModal(record)}
+                  />
+                ) : null}
+
+                {isDeleteOne ? (
+                  <DeleteOutlined
+                    className="action-table-delete"
+                    onClick={() => handleDeleteConfirm(record)}
+                  />
+                ) : null}
+              </div>
+            ),
+          },
+        ]),
   ];
 
   const rowSelection: TableRowSelection<any> = {
     selectedRowKeys,
-    onChange: (selectedRowKeys: React.Key[]) => {
-      console.log(selectedRowKeys);
-
+    onChange: (selectedRowKeys: React.Key[], selectedRows: any[]) => {
       setSelectedRowKeys(selectedRowKeys);
+      setSelected?.(selectedRows);
     },
     getCheckboxProps: (record: any) => ({
       // Customize the checkbox properties if needed
@@ -404,7 +421,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const handleSearch = () => {
     setLoading(true);
     const dataQuery = formSearch.getFieldsValue();
-    
+
     if (dataQuery.created) {
       const [fromdate, todate] = dataQuery.created;
       dataQuery.fromDate = fromdate ? fromdate.format("YYYY-MM-DD") : undefined;
@@ -414,13 +431,12 @@ const TableCustom: React.FC<TableCustomProps> = ({
 
     const keySearch = JSON.stringify(dataQuery);
     var params;
-    if(isSearchGeneral) {
+    if (isSearchGeneral) {
       params = {
-          keySearch: keySearch
+        keySearch: keySearch,
       };
-    }
-    else {
-      params = dataQuery 
+    } else {
+      params = dataQuery;
     }
     axiosConfig
       .get(get_list_url, { params })
@@ -437,7 +453,11 @@ const TableCustom: React.FC<TableCustomProps> = ({
 
   const handelExportExcel = async () => {
     await axiosConfig
-      .post(`${export_url}`,param_export ? param_export : (dataSource ? dataSource : dataTable), { responseType: "blob" })
+      .post(
+        `${export_url}`,
+        param_export ? param_export : dataSource ? dataSource : dataTable,
+        { responseType: "blob" }
+      )
       .then((res: any) => {
         const url = window.URL.createObjectURL(new Blob([res.data]));
         const link = document.createElement("a");
@@ -455,15 +475,26 @@ const TableCustom: React.FC<TableCustomProps> = ({
   return (
     <div className="table-custom">
       {/* thêm formFilter vào đây */}
-      <SearchLayout
-        //children truyền từ ngoài vào
-        children={<Form form={formSearch}>{searchComponent}</Form>}
-        handleSearch={handleSearch}
-      />
+      {searchComponent ? (
+        <SearchLayout
+          //children truyền từ ngoài vào
+          children={<Form form={formSearch}>{searchComponent}</Form>}
+          handleSearch={handleSearch}
+        />
+      ) : (
+        ""
+      )}
 
       <Space className="operation-button">
         {add_button ? (
-          <ButtonCustom text="Thêm mới" onClick={handleOpenModalAddCustom ? handleOpenModalAddCustom : handelOpenAddModal} />
+          <ButtonCustom
+            text="Thêm mới"
+            onClick={
+              handleOpenModalAddCustom
+                ? handleOpenModalAddCustom
+                : handelOpenAddModal
+            }
+          />
         ) : null}
         {export_button ? (
           <ButtonCustom
@@ -485,7 +516,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
         <Table
           className="table-custom-style"
           columns={customColumn}
-          scroll={{ x: 'max-content' }}
+          scroll={{ x: "max-content" }}
           dataSource={dataSource ? dataSource : dataTable}
           bordered
           rowKey={(record) => record[`${rowKey}`]}
