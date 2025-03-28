@@ -1,9 +1,9 @@
-import React, { CSSProperties, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import MainLayout from "../../../../../layout/MainLayout";
 import { Collapse, Form, Image, Modal, Spin } from "antd";
 import ButtonCustom from "../../../../../components/button/button";
 import { routesConfig } from "../../../../../routes/routes";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./CtPhieuNhap.scss";
 import FormItemInput from "../../../../../components/form-input/FormInput";
 import dayjs, { Dayjs } from "dayjs";
@@ -43,6 +43,7 @@ type dataSourceInterface = {
 const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
+  const { id } = useParams<{ id: string }>();
 
   //#region thông tin nhập kho
   const [form1] = useForm();
@@ -51,6 +52,53 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
   const [ngay_het_han, set_ngay_het_han] = useState<Dayjs | null>();
   const [nha_cung_cap, set_nha_cung_cap] = useState<string>("");
   const [ghi_chu, set_ghi_chu] = useState<string>("");
+
+  useEffect(()=> {
+    if(type === "edit" && id){
+      axiosConfig.get(`api/phieu-nhap-kho/get-by-id/${id}`,id)
+      .then((res:any) => {
+        const data = res.data;
+        console.log(data);
+        
+        set_ma_phieu_nhap(data.ma)
+        set_ngay_du_kien(data.ngay_du_kien)
+        set_ngay_het_han(data.ngay_het_han)
+        set_nha_cung_cap(data.nha_cung_cap)
+        set_ghi_chu(data.ghi_chu)
+        // (data)
+        const dataTable = data.ls_san_phan_nhap_kho.map((item:any):dataSourceInterface=> {
+          return{
+            key: item.id,
+            ma_san_pham: item.san_pham_dto.ma_san_pham,
+            ten_san_pham: item.san_pham_dto.ten_san_pham,
+            ten_danh_muc: item.san_pham_dto.ten_danh_muc,
+            duong_dan_anh_bia: item.san_pham_dto.duong_dan_anh_bia,
+            don_gia: item.san_pham_dto.gia,
+            san_pham_id: item.san_pham_dto.id,
+            sku: item.san_pham_dto.sku,
+            so_luong: item.san_pham_dto.so_luong,
+          }
+        })
+        console.log(dataTable);
+        
+        setDataSource(dataTable)
+
+        // Set giá trị vào form
+        form1.setFieldsValue({
+          ma_phieu_nhap: data.ma,
+          ngay_du_kien: data.ngay_du_kien ? dayjs(data.ngay_du_kien) : null,
+          ngay_het_han: data.ngay_het_han ? dayjs(data.ngay_het_han) : null,
+          nha_cung_cap: data.nha_cung_cap,
+          ghi_chu: data.ghi_chu,
+        });
+      })
+
+      
+      .catch((err:any)=> {
+        console.log(err);
+      })
+    }
+  },[])
 
   const Items1 = [
     {
@@ -101,8 +149,8 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
           </div>
           <Form.Item name="ghi_chu">
             <FormAreaCustom
-              label="Nhà cung cấp"
-              placeholder="Nhà cung cấp"
+              label="Ghi chú"
+              placeholder="Ghi chú"
               value={ghi_chu}
               onChange={(e: any) => set_ghi_chu(e.target.values)}
             />
@@ -160,6 +208,7 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
       render: (item: any, me: any) => (
         <div>
           <FormInputNumber
+            value={me.so_luong}
             style={{ width: "100%" }}
             onChange={(value: number | null, values: string | null) => {
               const updatedDataSource = dataSource.map(
@@ -183,6 +232,7 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
         <div>
           <FormInputNumber
             afterPrefixIcon="VND"
+            value={me.don_gia}
             style={{ width: "100%" }}
             onChange={(value: number | null, values: string | null) => {
               const updatedDataSource = dataSource.map(
@@ -247,10 +297,10 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
 
   //xử lý lưu thoogn tin nhập kho
   const handleOk = () => {
+    setLoading(true)
     form1
       .validateFields()
       .then((values) => {
-        console.log("DataSource: ", dataSource);
         const data = {
           ma: values.ma_phieu_nhap,
           ngay_du_kien: values.ngay_du_kien,
@@ -259,9 +309,9 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
           ghi_chu:values.ghi_chu,
           ls_san_phan_nhap_kho: dataSource
         };
-        axiosConfig.post(`api/phieu-nhap-kho/create`, data)
+        axiosConfig.post(type === "add" ? `api/phieu-nhap-kho/create` : `api/phieu-nhap-kho/edit/${id}`, data)
         .then((res:any)=> {
-          
+            navigate(routesConfig.nhapKho)
         })
         .catch((err:any)=> {
           ShowToast("warning", "Thống báo", "Có lỗi xảy ra", 3)
@@ -269,6 +319,9 @@ const ChiTietPhieuNhap: React.FC<ChiTietPhieuNhapProps> = ({ label, type }) => {
       })
       .catch((errorInfo) => {
         console.error("Validation failed: ", errorInfo);
+      })
+      .finally(()=> {
+        setLoading(false)
       });
   };
 

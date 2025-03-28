@@ -1,4 +1,4 @@
-import { Col, Form, Modal, Row, Spin } from "antd";
+import { Col, Divider, Form, Modal, Row, Spin, Typography } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
@@ -8,6 +8,9 @@ import FormItemInput from "../../../../components/form-input/FormInput";
 import DatePickerCustomOld from "../../../../components/datepicker/DatePickerCustomOld";
 import { useNavigate } from "react-router-dom";
 import { routesConfig } from "../../../../routes/routes";
+import ButtonCustom from "../../../../components/button/button";
+import { axiosConfig } from "../../../../config/configApi";
+import ShowToast from "../../../../components/show-toast/ShowToast";
 
 type NhapKhoProps = {};
 
@@ -41,21 +44,21 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
       render: (item: any) => <>{item}</>,
     },
     {
-        title: "Trạng thái",
-        dataIndex: "trang_thai",
-        key: "trang_thai",
-        render: (item: any) => (
-          <>
-            {item === 1 ? (
-              <div className="status-field-1">Phiếu mới</div>
-            ) : item === 2 ? (
-              <div className="status-field-2">Hết hạn</div>
-            ) : (
-              <div className="status-field-3">Hoàn thành</div>
-            )}
-          </>
-        ),
-      },
+      title: "Trạng thái",
+      dataIndex: "trang_thai",
+      key: "trang_thai",
+      render: (item: any) => (
+        <>
+          {item === 1 ? (
+            <div className="status-field-1">Phiếu mới</div>
+          ) : item === 2 ? (
+            <div className="status-field-2">Hết hạn</div>
+          ) : (
+            <div className="status-field-3">Hoàn thành</div>
+          )}
+        </>
+      ),
+    },
     {
       title: "Ngày tạo phiếu",
       dataIndex: "created",
@@ -64,14 +67,26 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
     },
   ];
 
-  const handleOpenDetailModalCustom =() => {
-
+  const [isOpenModalDetail, setIsOpenModalDetail] = useState<boolean>(false);
+  const handleOpenDetailModalCustom = () => {
+    setIsOpenModalDetail(true);
+  };
+  
+  const handleConfirmPhieuNhap = () => {
+    setLoading(true)
+    axiosConfig.put(`api/phieu-nhap-kho/xu-ly/${reacordDetail.id}`)
+      .then((res:any)=> {
+        setIsOpenModalDetail(false)
+        ShowToast("success", "Thông báo", "Nhập đơn hàng thành công", 3)
+      })
+      .catch(()=>{
+        setIsOpenModalDetail(false)
+        ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3)
+      })
+      .finally(()=>{
+        setLoading(false)
+      })
   }
-
-  useEffect(()=> {
-    console.log("reacordDetail:: ", reacordDetail);
-    
-  },[reacordDetail])
 
   return (
     <MainLayout label="Danh sách yêu cầu nhập kho">
@@ -81,11 +96,12 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
           get_list_url="/api/phieu-nhap-kho"
           delete_one_url="/api/phieu-nhap-kho"
           export_url="/api/phieu-nhap-kho/export"
-          handleOpenModalAddCustom={()=>navigate(routesConfig.themPhieuNhap)}
-          otherAction ={
+          handleOpenModalAddCustom={() => navigate(routesConfig.themPhieuNhap)}
+          otherAction={
             <InboxOutlined
-                className="action-table-1"
-              />
+              onClick={handleOpenDetailModalCustom}
+              className="action-table-1"
+            />
           }
           edit_url_page={routesConfig.chiTietPhieuNhap}
           edit_url_page_filter_field="id"
@@ -124,8 +140,32 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
         />
       </Spin>
 
-      <Modal >
+      <Modal
+        centered
+        title="Xử lý phiếu nhập"
+        footer={false}
+        open={isOpenModalDetail}
+        onCancel={() => setIsOpenModalDetail(false)}
+      >
+        <div style={{display:"grid",}}>
+          <Typography.Text>
+            Đơn hàng nhập đã tới kho hàng và được kiểm tra cẩn thận?
+          </Typography.Text>
+          <Typography.Title>
+            Tiến hành nhập sản phẩm vào kho
+          </Typography.Title>
 
+          <div
+            style={{ display: "flex", justifyContent: "center", gap: "16px", marginTop:"16px" }}
+          >
+            <ButtonCustom
+              text="Đóng"
+              variant="outlined"
+              onClick={() => setIsOpenModalDetail(false)}
+            />
+            <ButtonCustom text="Hoàn thành" variant="solid" onClick={handleConfirmPhieuNhap}/>
+          </div>
+        </div>
       </Modal>
     </MainLayout>
   );

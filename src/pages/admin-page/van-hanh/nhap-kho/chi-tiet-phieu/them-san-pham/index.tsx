@@ -65,8 +65,6 @@ const ThemSanPhamVaoPhieuNhap: React.FC<ThemSanPhamVaoPhieuNhapProps> = ({
   ];
 
   const handleOK = () => {
-    console.log("selectedProducts:: ", selectedProducts);
-
     const dataTable = selectedProducts.map((item:any):dataSourceInterface=> {
         return {
             key: item.id,
