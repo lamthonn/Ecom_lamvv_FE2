@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Col, Button, Typography, Divider, Modal, Form, Input, message } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Button, Typography, Divider, Modal, Form, Input, message, List, Space, Tag } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import MainLayout from '../../../layout/MainLayout';
-import { getDetailAcc, UpdateEmail, UpdatePassword, UpdatePhone } from '../../../services/AuthenServices';
+import { getDetailAcc, UpdateEmail, UpdatePassword, UpdatePhone, AddBankAccount, UpdateBankAccount, DeleteBankAccount, SetDefaultBankAccount } from '../../../services/AuthenServices';
 
 const { Title, Text } = Typography;
+
+interface BankAccount {
+  id: string;
+  ten_tai_khoan: string;
+  so_tai_khoan: string;
+  ten_ngan_hang: string;
+  so_the: string;
+  is_default: boolean;
+}
 
 interface AccountData {
   so_dien_thoai: string;
   email: string;
+  listNganHangs: BankAccount[];
 }
 
 const AccountInfo: React.FC = () => {
@@ -17,11 +27,14 @@ const AccountInfo: React.FC = () => {
   const [isPhoneModalVisible, setIsPhoneModalVisible] = useState<boolean>(false);
   const [isEmailModalVisible, setIsEmailModalVisible] = useState<boolean>(false);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState<boolean>(false);
+  const [isBankModalVisible, setIsBankModalVisible] = useState<boolean>(false);
+  const [editingBankAccount, setEditingBankAccount] = useState<BankAccount | null>(null);
 
   // Tạo các instance form riêng biệt cho từng modal
   const [phoneForm] = Form.useForm();
   const [emailForm] = Form.useForm();
   const [passwordForm] = Form.useForm();
+  const [bankForm] = Form.useForm();
 
   // Hàm lấy dữ liệu tài khoản
   const getData = async () => {
@@ -60,15 +73,30 @@ const AccountInfo: React.FC = () => {
     setIsPasswordModalVisible(true);
   };
 
+  // Hàm mở modal thêm/sửa tài khoản ngân hàng
+  const showBankModal = (bankAccount?: BankAccount) => {
+    if (bankAccount) {
+      setEditingBankAccount(bankAccount);
+      bankForm.setFieldsValue(bankAccount);
+    } else {
+      setEditingBankAccount(null);
+      bankForm.resetFields();
+    }
+    setIsBankModalVisible(true);
+  };
+
   // Hàm đóng modal
   const handleCancel = () => {
     setIsPhoneModalVisible(false);
     setIsEmailModalVisible(false);
     setIsPasswordModalVisible(false);
+    setIsBankModalVisible(false);
     // Reset form tương ứng khi đóng modal
     phoneForm.resetFields();
     emailForm.resetFields();
     passwordForm.resetFields();
+    bankForm.resetFields();
+    setEditingBankAccount(null);
   };
 
   // Hàm cập nhật số điện thoại
@@ -122,6 +150,76 @@ const AccountInfo: React.FC = () => {
       });
   };
 
+  // Hàm thêm hoặc cập nhật tài khoản ngân hàng
+  const handleBankAccountSubmit = async (values: Omit<BankAccount, 'id'>) => {
+    try {
+      if (editingBankAccount) {
+        // Cập nhật tài khoản ngân hàng
+        //await UpdateBankAccount(editingBankAccount.id, values);
+        message.success('Cập nhật tài khoản ngân hàng thành công!');
+        setAccountData((prev) => {
+          if (!prev) return prev;
+          const updatedBankAccounts = prev.listNganHangs.map((account) =>
+            account.id === editingBankAccount.id ? { ...account, ...values } : account
+          );
+          return { ...prev, listNganHangs: updatedBankAccounts };
+        });
+      } else {
+        // Thêm tài khoản ngân hàng mới
+        const response = await AddBankAccount(values);
+        message.success('Thêm tài khoản ngân hàng thành công!');
+        setAccountData((prev) => {
+          if (!prev) return prev;
+          return { ...prev, listNganHangs: [...(prev.listNganHangs || []), response.data] };
+        });
+      }
+      handleCancel();
+    } catch (error) {
+      message.error(
+        editingBankAccount
+          ? 'Cập nhật tài khoản ngân hàng thất bại. Vui lòng thử lại.'
+          : 'Thêm tài khoản ngân hàng thất bại. Vui lòng thử lại.'
+      );
+      console.error(error);
+    }
+  };
+
+  // Hàm xóa tài khoản ngân hàng
+  const handleDeleteBankAccount = async (id: string) => {
+    try {
+      await DeleteBankAccount(id);
+      message.success('Xóa tài khoản ngân hàng thành công!');
+      setAccountData((prev) => {
+        if (!prev) return prev;
+        const updatedBankAccounts = prev.listNganHangs.filter((account) => account.id !== id);
+        return { ...prev, listNganHangs: updatedBankAccounts };
+      });
+    } catch (error) {
+      message.error('Xóa tài khoản ngân hàng thất bại. Vui lòng thử lại.');
+      console.error(error);
+    }
+  };
+
+  // Hàm đặt tài khoản ngân hàng làm mặc định
+  const handleSetDefaultBankAccount = async (id: string) => {
+    try {
+      await SetDefaultBankAccount(id);
+      message.success('Đặt tài khoản ngân hàng mặc định thành công!');
+      setAccountData((prev) => {
+        if (!prev) return prev;
+        const updatedBankAccounts = prev.listNganHangs.map((account) => ({
+          ...account,
+          isDefault: account.id === id,
+        }));
+        return { ...prev, listNganHangs: updatedBankAccounts };
+      });
+        getData();
+    } catch (error) {
+      message.error('Đặt tài khoản ngân hàng mặc định thất bại. Vui lòng thử lại.');
+      console.error(error);
+    }
+  };
+
   return (
     <MainLayout label="Cấu hình hệ thống">
       <Card
@@ -132,7 +230,7 @@ const AccountInfo: React.FC = () => {
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Title level={3}>Thông Tin Tài Khoản</Title>
+        <Divider orientation="left">Thông tin tài khoản</Divider>
 
         {/* Số điện thoại */}
         <Row
@@ -190,11 +288,67 @@ const AccountInfo: React.FC = () => {
           </Col>
         </Row>
 
-        {/* Nút Cập nhật */}
+        {/* Tài khoản ngân hàng */}
+        <Divider orientation="left">Tài khoản ngân hàng</Divider>
+        <Row justify="space-between" align="middle" style={{ padding: '10px 0' }}>
+          <Col>
+            <Text strong>Danh sách tài khoản ngân hàng</Text>
+          </Col>
+          <Col>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => showBankModal()}>
+              Thêm tài khoản
+            </Button>
+          </Col>
+        </Row>
+        <List
+          dataSource={accountData?.listNganHangs || []}
+          renderItem={(item) => (
+            <List.Item
+              actions={[
+                <Button
+                  type="primary"
+                  icon={<EditOutlined />}
+                  onClick={() => showBankModal(item)}
+                >
+                  Sửa
+                </Button>,
+                <Button
+                  type="primary"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleDeleteBankAccount(item.id)}
+                >
+                  Xóa
+                </Button>,
+                    item.is_default ? (
+                  <Tag color="green">Mặc định</Tag>
+                ) : (
+                  <Button
+                    type="primary"
+                    icon={<CheckCircleOutlined />}
+                    onClick={() => handleSetDefaultBankAccount(item.id)}
+                  >
+                    Đặt làm mặc định
+                  </Button>
+                ),
+              ]}
+            >
+              <List.Item.Meta
+                title={item.ten_ngan_hang}
+                description={
+                  <div>
+                    <Text>Số tài khoản: {item.so_tai_khoan}</Text>
+                    <br />
+                    <Text>Chủ tài khoản: {item.ten_tai_khoan}</Text>
+                  </div>
+                }
+              />
+            </List.Item>
+          )}
+          locale={{ emptyText: 'Chưa có tài khoản ngân hàng nào.' }}
+        />
+
         <Divider />
-        <Button type="primary" block>
-          Cập nhật
-        </Button>
       </Card>
 
       {/* Modal chỉnh sửa số điện thoại */}
@@ -286,6 +440,52 @@ const AccountInfo: React.FC = () => {
             ]}
           >
             <Input.Password placeholder="Xác nhận mật khẩu mới" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Lưu
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Modal thêm/sửa tài khoản ngân hàng */}
+      <Modal
+        title={editingBankAccount ? 'Chỉnh sửa tài khoản ngân hàng' : 'Thêm tài khoản ngân hàng'}
+        open={isBankModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form form={bankForm} onFinish={handleBankAccountSubmit}>
+          <Form.Item
+            name="ten_ngan_hang"
+            rules={[{ required: true, message: 'Vui lòng nhập tên ngân hàng!' }]}
+          >
+            <Input placeholder="Tên ngân hàng" />
+          </Form.Item>
+          <Form.Item
+            name="so_tai_khoan"
+            rules={[
+              { required: true, message: 'Vui lòng nhập số tài khoản!' },
+              { pattern: /^[0-9]+$/, message: 'Số tài khoản chỉ được chứa số!' },
+            ]}
+          >
+            <Input placeholder="Số tài khoản" />
+          </Form.Item>
+          <Form.Item
+            name="so_the"
+            rules={[
+              { required: true, message: 'Vui lòng nhập số thẻ!' },
+              { pattern: /^[0-9]+$/, message: 'Số thẻ chỉ được chứa số!' },
+            ]}
+          >
+            <Input placeholder="Số thẻ" />
+          </Form.Item>
+          <Form.Item
+            name="ten_tai_khoan"
+            rules={[{ required: true, message: 'Vui lòng nhập tên chủ tài khoản!' }]}
+          >
+            <Input placeholder="Tên chủ tài khoản" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
