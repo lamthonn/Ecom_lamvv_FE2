@@ -13,6 +13,8 @@ export const routesConfig = {
     cauHinh: "/seller-center/cau-hinh",
     //Vận hành
     nhapKho:"/seller-center/nhap-kho",
+    chiTietPhieuNhap:"/seller-center/sua-phieu-nhap",
+    themPhieuNhap:"/seller-center/them-phieu-nhap",
     quanLyDonHang:"/seller-center/quan-ly-don-hang",
     //marketing
     quanLyMaGiamGia:"/seller-center/quan-ly-ma-giam-gia",

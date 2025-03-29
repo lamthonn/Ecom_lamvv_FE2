@@ -7,8 +7,8 @@ import { UserOutlined } from "@ant-design/icons";
 const HeaderLayout = () => {
     const itemsMenu = [
         {
-            key: 'tai-khoan',
-            label: 'Tài khoản',
+            key: 'dang-xuat',
+            label: 'Đăng xuất',
         }
     ]
     

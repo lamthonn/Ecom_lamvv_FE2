@@ -13,6 +13,7 @@ import DanhSachKhachHang from "../pages/admin-page/quan-ly-khach-hang/danh-sach-
 import SuaSanPham from "../pages/admin-page/quan-ly-san-pham/danh-sach-san-pham/components/sua-san-pham";
 import NhapKho from "../pages/admin-page/van-hanh/nhap-kho";
 import DonHang from "../pages/admin-page/van-hanh/don-hang";
+import ChiTietPhieuNhap from "../pages/admin-page/van-hanh/nhap-kho/chi-tiet-phieu/CtPhieuNhap";
 import AccountInfo from "../pages/admin-page/cau-hinh";
 import DanhSachMaGiamGia from "../pages/admin-page/quan-ly-ma-giam-gia/danh-sach";
 import DanhSachChuongTrinhMarketing from "../pages/admin-page/quan-ly-chuong-trinh-marketing/danh-sach";
@@ -124,6 +125,22 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <NhapKho />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: `${routesConfig.chiTietPhieuNhap}/:id`,
+        element: (
+          <ProtectedRoute>
+            <ChiTietPhieuNhap label="Sửa yêu cầu nhập kho" type="edit"/>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: `${routesConfig.themPhieuNhap}`,
+        element: (
+          <ProtectedRoute>
+            <ChiTietPhieuNhap label="Thêm mới yêu cầu nhập kho" type="add"/>
           </ProtectedRoute>
         ),
       },

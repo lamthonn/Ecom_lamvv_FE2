@@ -70,7 +70,7 @@ const DanhSachChuongTrinhMarketing: React.FC<DanhSachChuongTrinhMarketingProps> 
 
   return (
     <div>
-      <MainLayout label="Kênh Marketing > Chương Trình Marketing Của Shop">
+      <MainLayout label="Chương Trình Marketing Của cửa hàng">
         <TableCustom
             edit_url='/api/chuong-trinh-marketing'
             delete_one_url='/api/chuong-trinh-marketing'

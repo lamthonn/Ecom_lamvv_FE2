@@ -113,7 +113,7 @@ const DanhSachMaGiamGia: React.FC<DanhSachMaGiamGiaProps> = () => {
 
   return (
     <div>
-      <MainLayout label="Kênh Marketing > Mã Giảm Giá Của Shop">
+      <MainLayout label="Mã Giảm Giá Của cửa hàng">
         <TableCustom
             edit_url='/api/ma-giam-gia'
             delete_one_url='/api/ma-giam-gia'

@@ -41,6 +41,21 @@
         .action-table-delete:active {
             background-color: #fcb8b8;
         }
+
+        .action-table-1 {
+            background-color: #e1fff1;
+            padding: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .action-table-1:hover {
+            background-color: rgb(212, 250, 244);
+        }
+
+        .action-table-1:active {
+            background-color: #b8fcc7;
+        }
     }
 
     .operation-button {
