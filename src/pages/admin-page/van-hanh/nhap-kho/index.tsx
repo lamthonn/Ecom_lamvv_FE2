@@ -93,6 +93,10 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
       <Spin spinning={loading}>
         <TableCustom
           columns={columns}
+          dieu_kien1={(record: any) => record.trang_thai === 1}
+          dieu_kien2={(record: any) => record.trang_thai === 1}
+          dieu_kien3={(record: any) => record.trang_thai === 1}
+          dieu_kien4={(record: any) => true}
           get_list_url="/api/phieu-nhap-kho"
           delete_one_url="/api/phieu-nhap-kho"
           export_url="/api/phieu-nhap-kho/export"

@@ -85,7 +85,7 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
                         <Col span={8}>
                           <Form.Item name="ma_san_pham">
                             <FormItemInput
-                              label="Mã danh mục"
+                              label="Mã sản phẩm"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
@@ -93,7 +93,7 @@ const DanhSachSanPham:React.FC<DanhSachSanPhamProps> = ({
                         <Col span={8}>
                           <Form.Item name="ten_san_pham">
                             <FormItemInput
-                              label="Tên danh mục"
+                              label="Tên sản phẩm"
                               style={{ width: "100%" }}
                             />
                           </Form.Item>
