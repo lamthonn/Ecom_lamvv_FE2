@@ -34,3 +34,19 @@ export const UpdatePhone: (body: any) => Promise<AxiosResponse<any>> = (body: an
 export const getDetailAcc: () => Promise<AxiosResponse<any>> = () => {
   return axiosConfig.get("/api/Authen/getDetailAcc");
 };
+// ngân hàng
+export const AddBankAccount: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
+  return axiosConfig.post("/api/ngan-hang/add-bank-account", body);
+};
+export const UpdateBankAccount: (body: any) => Promise<AxiosResponse<any>> = (body: any) => {
+  return axiosConfig.put("/api/ngan-hang", body);
+};
+export const DeleteBankAccount: (id: any) => Promise<AxiosResponse<any>> = (id: any) => {
+  return axiosConfig.delete(`/api/ngan-hang/${id}`);
+};
+export const SetDefaultBankAccount: (id: string) => Promise<AxiosResponse<any>> = (id: string) => {
+  return axiosConfig.put(`/api/ngan-hang/${id}/set-default`);
+};
+export const BlockUser: (id: string) => Promise<AxiosResponse<any>> = (id: string) => {
+  return axiosConfig.put(`/api/Authen/BlockUser?id=${id}`);
+};

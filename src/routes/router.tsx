@@ -17,6 +17,7 @@ import ChiTietPhieuNhap from "../pages/admin-page/van-hanh/nhap-kho/chi-tiet-phi
 import AccountInfo from "../pages/admin-page/cau-hinh";
 import DanhSachMaGiamGia from "../pages/admin-page/quan-ly-ma-giam-gia/danh-sach";
 import DanhSachChuongTrinhMarketing from "../pages/admin-page/quan-ly-chuong-trinh-marketing/danh-sach";
+import RevenueStats from "../pages/admin-page/doanh-thu";
 
 export const router = createBrowserRouter([
   {
@@ -105,6 +106,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DanhSachChuongTrinhMarketing />
+          </ProtectedRoute>
+        )
+      },
+      //doanh thu
+      {
+        path: routesConfig.doanhThu,
+        element: (
+          <ProtectedRoute>
+            <RevenueStats />
           </ProtectedRoute>
         )
       },
