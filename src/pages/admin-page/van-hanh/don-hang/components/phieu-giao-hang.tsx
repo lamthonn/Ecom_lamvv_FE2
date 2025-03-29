@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Modal, Button, Typography, Divider } from "antd";
 import "./phieu-giao-hang.scss";
 import Barcode from "react-barcode";

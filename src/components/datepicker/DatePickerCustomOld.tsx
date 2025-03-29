@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { ConfigProvider, DatePicker, Form, Typography } from "antd";
+import { ConfigProvider, DatePicker, Typography } from "antd";
 import { DatePickerProps, RangePickerProps } from "antd/es/date-picker";
 import dayjs, { Dayjs } from "dayjs";
 import 'dayjs/locale/vi';

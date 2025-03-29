@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
 import { Spin, Tabs } from "antd";
-import TableCustom from "../../../../components/table/table-custom";
 import "./style.scss";
 import StatusTable from "./components/statusTable";
 type DonHangProps = {};

@@ -1,6 +1,6 @@
-import { Col, Divider, Form, Modal, Row, Spin, Typography } from "antd";
+import { Col, Form, Modal, Row, Spin, Typography } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
 import TableCustom from "../../../../components/table/table-custom";
 import { formatDate } from "../../../../config/common";

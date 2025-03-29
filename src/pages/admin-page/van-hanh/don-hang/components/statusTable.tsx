@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import TableCustom from "../../../../../components/table/table-custom";
-import { title } from "process";
 import { axiosConfig, BASE_URL } from "../../../../../config/configApi";
 import ShowToast from "../../../../../components/show-toast/ShowToast";
-import { DropboxOutlined, InboxOutlined, SendOutlined } from "@ant-design/icons";
+import { SendOutlined } from "@ant-design/icons";
 import { Image } from "antd";
 import { formatDate } from "../../../../../config/common";
 import ButtonCustom from "../../../../../components/button/button";
