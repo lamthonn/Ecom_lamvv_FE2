@@ -71,7 +71,7 @@ type TableCustomProps = {
   searchComponent?: React.ReactNode;
 
   // icon clone
-  action_element?: (record: any) => React.ReactNode;
+  action_element?: (record: any, onDataUpdated: () => void) => React.ReactNode;
 };
 
 const TableCustom: React.FC<TableCustomProps> = ({
@@ -138,13 +138,13 @@ const TableCustom: React.FC<TableCustomProps> = ({
   }, []);
 
   //get data
-  const getData = (curentPage: number, pageSize: number) => {
+  const getData = (curentPage?: number, pageSize?: number) => {
     setLoading(true);
     axiosConfig
       .get(get_list_url, {
         params: {
-          pageNumber: curentPage,
-          pageSize: pageSize,
+          pageNumber: curentPage ?? 1, 
+          pageSize: pageSize ?? 10,
         },
       })
       .then((res: any) => {
@@ -404,6 +404,9 @@ const TableCustom: React.FC<TableCustomProps> = ({
                     onClick={() => handleDeleteConfirm(record)}
                   />
                 ) : null}
+                {action_element && typeof action_element === "function"
+                  ? action_element(record, getData)
+                  : null}
               </div>
             ),
           },

@@ -7,7 +7,9 @@ import { Col, Divider, Form, Row } from 'antd';
 import DatePickerCustomOld from '../../../../components/datepicker/DatePickerCustomOld';
 import FormItemInput from "../../../../components/form-input/FormInput";
 import FormAreaCustom from '../../../../components/text-area/FormTextArea';
-import { LockOutlined } from "@ant-design/icons";
+import { LockOutlined, UnlockOutlined  } from "@ant-design/icons";
+import { BlockUser } from '../../../../services/AuthenServices';
+import ShowToast from '../../../../components/show-toast/ShowToast';
 type DanhSachKhachHangProps = {
 
 }
@@ -83,9 +85,19 @@ const DanhSachKhachHang:React.FC<DanhSachKhachHangProps> = ({
         </>
     );
 
-    const handleLockAccount = (record: any) => {
+    const handleLockAccount =async (record: any, onDataUpdated: () => void) => {
         console.log("::", record)
-        
+        await BlockUser(record.id) 
+        .then(res => {
+            console.log("blockusser::", res);
+            if(res && res?.data) {
+                ShowToast("success", "Thông báo", "Khóa/Mở khóa tài khách hàng thành công!")
+                onDataUpdated()
+            }            
+        })
+        .catch(err => {
+
+        })
     }
       
     
@@ -119,11 +131,16 @@ const DanhSachKhachHang:React.FC<DanhSachKhachHangProps> = ({
                         "SheetName": "DanhSachKhachHang",
                         "KeySearch": "" // Lọc dữ liệu (tùy chọn)
                     }}  
-                    action_element={(record: any) => (
-                        <LockOutlined
-                            className="action-table-edit"
-                            onClick={() => handleLockAccount(record)}
-                        />
+                    action_element={(record: any, onDataUpdated: () => void) => (
+                        record.trang_thai ? 
+                            <LockOutlined
+                                className="action-table-edit"
+                                onClick={() => handleLockAccount(record, onDataUpdated)}
+                            /> 
+                            : <UnlockOutlined 
+                                className="action-table-edit"
+                                onClick={() => handleLockAccount(record, onDataUpdated)}
+                            /> 
                     )}
                     searchComponent={
                         <Row gutter={16}>
