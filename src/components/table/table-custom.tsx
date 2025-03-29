@@ -65,6 +65,9 @@ type TableCustomProps = {
 
   //search
   searchComponent?: React.ReactNode;
+
+  // icon clone
+  action_element?: (record: any) => React.ReactNode;
 };
 
 const TableCustom: React.FC<TableCustomProps> = ({
@@ -98,7 +101,8 @@ const TableCustom: React.FC<TableCustomProps> = ({
   rowKey = "id",
   export_url,
   param_export,
-  isSearchGeneral = false
+  isSearchGeneral = false,
+  action_element
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState<boolean>(false);
@@ -383,6 +387,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
               onClick={() => handleDeleteConfirm(record)}
             />
           ) : null}
+
+          {action_element && typeof action_element === "function"
+            ? action_element(record)
+            : null}
         </div>
       ),
     },

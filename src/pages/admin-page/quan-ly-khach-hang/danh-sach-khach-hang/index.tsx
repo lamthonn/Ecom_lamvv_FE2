@@ -7,6 +7,7 @@ import { Col, Divider, Form, Row } from 'antd';
 import DatePickerCustomOld from '../../../../components/datepicker/DatePickerCustomOld';
 import FormItemInput from "../../../../components/form-input/FormInput";
 import FormAreaCustom from '../../../../components/text-area/FormTextArea';
+import { LockOutlined } from "@ant-design/icons";
 type DanhSachKhachHangProps = {
 
 }
@@ -81,6 +82,11 @@ const DanhSachKhachHang:React.FC<DanhSachKhachHangProps> = ({
             <Divider />
         </>
     );
+
+    const handleLockAccount = (record: any) => {
+        console.log("::", record)
+        
+    }
       
     
     return (
@@ -90,9 +96,35 @@ const DanhSachKhachHang:React.FC<DanhSachKhachHangProps> = ({
                     isViewDetail={true}
                     columns={columns}
                     DeleteTitle="Xóa sản phẩm"
-                    get_list_url="/api/khach-hang"
+                    export_url='/api/khach-hang/export-excel' 
+                    get_list_url={`/api/khach-hang?keySearch={"is_super_admin": false}`}   
                     handleOpenModalAddCustom={handleAddSanPham}
                     EditComponent={<EditComponent />}
+                    add_button={false}
+                    isEditOne={false}
+                    isDeleteOne={false}
+                    delete_button={false}
+                    isSearchGeneral={true}
+                    param_export={{
+                        "Columns": [
+                            { "DisplayName": "Tên khách hàng", "PropertyName": "ten" },
+                            { "DisplayName": "Email", "PropertyName": "email" },
+                            { "DisplayName": "Ngày sinh", "PropertyName": "ngay_sinh", "Format": "dd/MM/yyyy" },
+                            { "DisplayName": "Địa chỉ", "PropertyName": "dia_chi" },
+                            { "DisplayName": "Giới tính", "PropertyName": "gioi_tinh", "BoolTrueValue": "Nam", "BoolFalseValue": "Nữ" },
+                            { "DisplayName": "Số điện thoại", "PropertyName": "so_dien_thoai" },
+                            { "DisplayName": "Trạng thái", "PropertyName": "trang_thai", "BoolTrueValue": "Đang hoạt động", "BoolFalseValue": "Đã khóa" },
+                            { "DisplayName": "Ngày tạo", "PropertyName": "created", "Format": "dd/MM/yyyy HH:mm:ss" }
+                        ],
+                        "SheetName": "DanhSachKhachHang",
+                        "KeySearch": "" // Lọc dữ liệu (tùy chọn)
+                    }}  
+                    action_element={(record: any) => (
+                        <LockOutlined
+                            className="action-table-edit"
+                            onClick={() => handleLockAccount(record)}
+                        />
+                    )}
                     searchComponent={
                         <Row gutter={16}>
                         <Col span={8}>
