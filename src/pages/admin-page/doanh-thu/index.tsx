@@ -17,7 +17,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import DatePickerCustomOld from '../../../components/datepicker/DatePickerCustomOld';
 import MainLayout from '../../../layout/MainLayout';
 import { GetRevenueStats } from '../../../services/DoanhThuServices';
+import ShowToast from '../../../components/show-toast/ShowToast';
+import { RangePickerProps } from 'antd/es/date-picker';
 // import { GetRevenueStats } from '../services/AuthenServices';
+
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -67,7 +70,7 @@ const RevenueStats: React.FC = () => {
 
     // Biểu đồ doanh thu theo ngày (Line Chart)
     const lineChartDataByDate = {
-        labels: stats?.revenueByDate.map(item => dayjs(item.date).format('DD/MM/YYYY')) || [],
+        labels: stats?.revenueByDate.map(item => dayjs(item.date, 'DD/MM/YYYY').format('DD/MM/YYYY')) || [],
         datasets: [
             {
                 label: 'Doanh thu (VND)',
@@ -78,6 +81,7 @@ const RevenueStats: React.FC = () => {
             }
         ]
     };
+    
 
     // Biểu đồ doanh thu theo tháng (Line Chart)
     const lineChartDataByMonth = {
@@ -133,37 +137,16 @@ const RevenueStats: React.FC = () => {
         ]
     };
 
-    // Biểu đồ doanh thu theo ngân hàng (Pie Chart)
-    const pieChartDataByBank = {
-        labels: stats?.revenueByBank.map(item => item.tenNganHang) || [],
-        datasets: [
-            {
-                label: 'Doanh thu theo ngân hàng',
-                data: stats?.revenueByBank.map(item => item.revenue) || [],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                ],
-                borderWidth: 1,
-            }
-        ]
-    };
-
-    const onDateRangeChange = (dates: [Dayjs, Dayjs] | null, dateStrings: [string, string]) => {
-        if (dates) {
-            setDateRange(dates);
+    
+    const onDateRangeChange: RangePickerProps["onChange"] = (dates, dateStrings) => {
+        if (dates && dates.length === 2) {
+            setDateRange(dates as [Dayjs, Dayjs]); // Ép kiểu để chắc chắn là [Dayjs, Dayjs]
         } else {
-            setDateRange([dayjs().startOf('month'), dayjs()]);
+            setDateRange([dayjs().startOf("month"), dayjs()]);
         }
     };
+    
+    
 
     return (
         <MainLayout label="Doanh thu">
@@ -176,6 +159,7 @@ const RevenueStats: React.FC = () => {
                             value={dateRange}
                             format="DD/MM/YYYY"
                             style={{ marginBottom: '20px' }}
+                            onChange={onDateRangeChange}
                         />
                     </Col>
                     <Col span={8}>
@@ -209,11 +193,6 @@ const RevenueStats: React.FC = () => {
                             <Tabs.TabPane tab="Theo sản phẩm" key="4">
                                 <Card title="Doanh thu theo sản phẩm">
                                     <Pie data={pieChartDataByProduct} options={{ responsive: true }} />
-                                </Card>
-                            </Tabs.TabPane>
-                            <Tabs.TabPane tab="Theo ngân hàng" key="5">
-                                <Card title="Doanh thu theo ngân hàng">
-                                    <Pie data={pieChartDataByBank} options={{ responsive: true }} />
                                 </Card>
                             </Tabs.TabPane>
                         </Tabs>
