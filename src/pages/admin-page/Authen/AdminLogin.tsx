@@ -13,9 +13,12 @@ import { loginAdmin } from "../../../services/AuthenServices";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ShowToast from "../../../components/show-toast/ShowToast";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 const { Title, Text } = Typography;
-
+interface CustomJwtPayload extends JwtPayload {
+  dvvc_id?: string; // hoặc number nếu `dvvc_id` là số
+}
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,12 +33,22 @@ const AdminLogin = () => {
     await loginAdmin(body)
       .then((res: any) => {
         localStorage.setItem("auth", JSON.stringify(res.data));
-        navigate("/seller-center/dashboard");
-        ShowToast(
-          "success",
-          "Đăng nhập thành công",
-          "Chào mừng bạn đến với Delias Seller Center"
-        );
+        var dataUser = jwtDecode<CustomJwtPayload>(res.data.token)
+        if(dataUser.dvvc_id === null || dataUser.dvvc_id === ''){
+          navigate("/seller-center/dashboard");
+          ShowToast(
+            "success",
+            "Đăng nhập thành công",
+            "Chào mừng bạn đến với Delias Seller Center"
+          );
+        }else{
+          navigate("/van-chuyen/don-hang");
+          ShowToast(
+            "success",
+            "Đăng nhập thành công",
+            "Chào mừng bạn đến với Delias Seller Center"
+          );
+        }
       })
       .catch((err: any) => {
         ShowToast(

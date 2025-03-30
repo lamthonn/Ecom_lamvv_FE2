@@ -2,13 +2,14 @@ import {  RouterProvider, useLocation, useNavigate } from "react-router-dom";
 import { router } from "../routes/router";
 import "../global.scss";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, MenuProps } from "antd";
-import { menuItem } from "../config";
+import { menuItem, menuItemVC } from "../config";
 import HeaderLayout from "./Header";
 import ProtectedRoute from "../routes/PrivateRoute";
 import { routesConfig } from "../routes/routes";
 import GroupLabel from "../components/group-label";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 const { Content, Footer, Sider } = Layout;
 
@@ -23,13 +24,28 @@ const siderStyle: React.CSSProperties = {
   scrollbarGutter: "stable",
   backgroundColor: "var(--color-primary-9)"
 };
-
+interface CustomJwtPayload extends JwtPayload {
+  dvvc_id?: string; // hoặc number nếu `dvvc_id` là số
+}
 const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
   children,
   label = "Chưa có tiêu đề"
 }) => {
   const location = useLocation(); // Lấy thông tin route hiện tại
   const navigate = useNavigate();
+  const authValue = localStorage.getItem("auth");
+  const [auth, setAuth] = useState<CustomJwtPayload>();
+  useEffect(()=> {
+    if (authValue) {
+          const decoded = jwtDecode(authValue);
+          setAuth(decoded);
+        }
+  },[])
+
+  useEffect(()=> {
+    console.log(auth);
+    
+  })
   const handleChangeMenu: MenuProps['onClick']  = (item:any) => {
     if(item.key === "dashboard") {
       navigate(routesConfig.dashboard);
@@ -84,6 +100,7 @@ const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
   if (location.pathname === "/login") {
     return <RouterProvider router={router} />;
   }
+  
 
   return (
     <Layout hasSider>
@@ -94,7 +111,7 @@ const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
           mode="inline"
           style={{ backgroundColor: "var(--color-primary-9)" }}
           defaultSelectedKeys={["1"]}
-          items={menuItem}
+          items={(auth?.dvvc_id === '' || auth?.dvvc_id === null) ? menuItem : menuItemVC}
           onClick={handleChangeMenu}
         />
       </Sider>

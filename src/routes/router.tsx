@@ -18,6 +18,7 @@ import AccountInfo from "../pages/admin-page/cau-hinh";
 import DanhSachMaGiamGia from "../pages/admin-page/quan-ly-ma-giam-gia/danh-sach";
 import DanhSachChuongTrinhMarketing from "../pages/admin-page/quan-ly-chuong-trinh-marketing/danh-sach";
 import RevenueStats from "../pages/admin-page/doanh-thu";
+import DonHangVanChuyen from "../pages/van-chuyen/don-hang";
 
 export const router = createBrowserRouter([
   {
@@ -162,6 +163,17 @@ export const router = createBrowserRouter([
           </ProtectedRoute>
         )
       }
+    ]
+  },
+
+  //shipper
+  {
+    path: "van-chuyen",
+    children:[
+      {
+        path: "don-hang",
+        element: <ProtectedRoute><DonHangVanChuyen /></ProtectedRoute>,
+      },
     ]
   },
 
