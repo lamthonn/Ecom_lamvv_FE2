@@ -6,7 +6,6 @@ import StatusTable from "./components/statusTable";
 type DonHangProps = {};
 
 const DonHang: React.FC<DonHangProps> = ({}) => {
-  const [loading, setLoading] = useState<boolean>(false);
 
   const items = [
     {
@@ -37,14 +36,12 @@ const DonHang: React.FC<DonHangProps> = ({}) => {
   ]
   return (
     <MainLayout label="Danh sách đơn hàng">
-      <Spin spinning={loading}>
         <Tabs
           defaultActiveKey="1"
           type="card"
           style={{ marginBottom: 32 }}
           items={items}
         />
-      </Spin>
     </MainLayout>
   );
 };

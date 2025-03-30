@@ -23,28 +23,6 @@ const ShippingLabelModalDetail: React.FC<Props> = ({
   }
 
   const maDonHang = data.ma_don_hang || "12312374928731HNVTP";
-  const handlePrint = () => {
-    window.print();
-
-    setTimeout(() => {
-      //gọi api xử lý đơn hàng
-      const dataBody = {
-        id: data.id,
-        trang_thai: 2,
-      };
-      axiosConfig
-        .put(`api/don-hang/xu-ly/${data.id}`, dataBody)
-        .then(() => {
-          ShowToast("success", "Thông báo", "Chuẩn bị đơn hàng thành công", 3);
-          onClose();
-        })
-        .catch(() => {
-          ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3);
-        });
-    }, 500); // Đợi 500ms sau khi in xong
-  };
-
- 
   return (
     <Modal
       centered

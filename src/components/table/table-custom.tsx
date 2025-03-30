@@ -52,6 +52,7 @@ type TableCustomProps = {
   edit_url?: string;
   add_url?: string;
   delete_one_url?: string;
+  setRefreshData?:()=> void;
   delete_any_url?: string;
   export_url?: string;
   handleOpenModalAddCustom?: () => void;
@@ -82,6 +83,7 @@ type TableCustomProps = {
 
 const TableCustom: React.FC<TableCustomProps> = ({
   columns,
+  setRefreshData,
   setCurrent,
   dieu_kien1,
   dieu_kien2,
@@ -140,6 +142,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [totalPage, setTotalPage] = useState<number>(1);
   const [totalRecord, setTotalRecord] = useState<number>(1);
 
+  useEffect(()=> {
+    console.log("hihihihih");
+    
+  },[setRefreshData])
   const navigate = useNavigate();
   useEffect(() => {
     const authValue = localStorage.getItem("auth");

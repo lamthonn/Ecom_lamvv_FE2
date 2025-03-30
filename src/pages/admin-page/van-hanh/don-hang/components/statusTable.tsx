@@ -3,7 +3,7 @@ import TableCustom from "../../../../../components/table/table-custom";
 import { axiosConfig, BASE_URL } from "../../../../../config/configApi";
 import ShowToast from "../../../../../components/show-toast/ShowToast";
 import { CheckCircleOutlined, SendOutlined } from "@ant-design/icons";
-import { Col, Form, Image, Modal, Row, Spin } from "antd";
+import { Button, Col, Form, Image, Modal, Row, Spin } from "antd";
 import { formatDate } from "../../../../../config/common";
 import ButtonCustom from "../../../../../components/button/button";
 import ShippingLabelModal from "./phieu-giao-hang";
@@ -14,6 +14,7 @@ import FormSelect from "../../../../../components/form-select/FormSelect";
 type StatusTable = {
   trang_thai?: number;
   is_ship?: boolean;
+  refresh?:any;
 };
 type DataTableInterface = {
   id?: string;
@@ -29,6 +30,7 @@ type DataTableInterface = {
 const StatusTable: React.FC<StatusTable> = ({
   trang_thai = 0,
   is_ship = false,
+  refresh,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const columns = [
@@ -82,15 +84,48 @@ const StatusTable: React.FC<StatusTable> = ({
       },
     },
   ];
-
+  const [refreshKey, setRefreshKey] = useState(0);
+useEffect(()=> {
+  setRefreshKey(refresh)
+},[refresh])
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1); // Thay đổi key để remount component con
+  };
   const [recordDetail, setRecordDetail] = useState<any>();
+  const [rows, setRows] = useState<any>();
+  const [typeXL, setTypeXL] = useState<any>();
   const [isOpenModalGuidvvc, setIsOpenModalGuidvvc] = useState<boolean>(false);
+  const [isVisibleXLN, setIsVisibleXLN] = useState<boolean>(false);
   const [isOpenModaldvvc, setIsOpenModaldvvc] = useState<boolean>(false);
   const [isOpenModalInPhieu, setIsOpenModalInPhieu] = useState<boolean>(false);
   const [isOpenModalInPhieuDetail, setIsOpenModalInPhieuDetail] =
     useState<boolean>(false);
-  const handleDongHang = (selectedRows: any) => {
-    console.log(selectedRows);
+
+  // type = 1 => đơn hàng => chờ lấy hàng
+  // type = 2 => chờ lấy hàng => đang giao
+  const handleOpenModalXLNhieu = (selectedRows: any, type: number) => {
+    setIsVisibleXLN(true);
+    setRows(selectedRows);
+    setTypeXL(type);
+  };
+
+  const handleXuLyNhieu = () => {
+    var newData = rows.map((item: any) => {
+      return {
+        id: item,
+        trang_thai: typeXL === 1 ? 2 : 3,
+      };
+    });
+    axiosConfig
+      .put(`/api/don-hang/xu-ly-nhieu`, newData)
+      .then((res: any) => {
+        ShowToast("success", "Thông báo", "Chuẩn bị đơn hàng thành công", 3);
+        setIsVisibleXLN(false)
+        handleRefresh();
+      })
+      .catch(() => {
+        ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3);
+      });
   };
 
   const open = (data: any) => {
@@ -102,6 +137,7 @@ const StatusTable: React.FC<StatusTable> = ({
     <div>
       <Spin spinning={loading}>
         <TableCustom
+          key={refreshKey}
           columns={columns}
           get_list_url={`/api/don-hang/get-all?trang_thai=${trang_thai}`}
           add_button={false}
@@ -162,20 +198,27 @@ const StatusTable: React.FC<StatusTable> = ({
           }
           operationButtonCustom={
             trang_thai === 1 ? (
-              <ButtonCustom text="Giao hàng loạt" onClick={handleDongHang} />
+              <ButtonCustom text="Giao hàng loạt" />
             ) : trang_thai === 2 ? (
-              <ButtonCustom text="Gửi hàng loạt" onClick={handleDongHang} />
+              <ButtonCustom text="Gửi hàng loạt" />
             ) : (
               ""
             )
           }
+          HandleOperationButton={(rows: any) => {
+            if (trang_thai === 1) {
+              handleOpenModalXLNhieu?.(rows, 1);
+            } else if (trang_thai === 2) {
+              handleOpenModalXLNhieu?.(rows, 2);
+            }
+          }}
           handleOpenModalEditCustom={open}
           otherAction={
             is_ship ? (
-                <CheckCircleOutlined
+              <CheckCircleOutlined
                 className="action-table-1"
                 onClick={() => {
-                  setIsOpenModaldvvc(true)
+                  setIsOpenModaldvvc(true);
                 }}
               />
             ) : trang_thai === 1 ? (
@@ -200,6 +243,7 @@ const StatusTable: React.FC<StatusTable> = ({
 
         {/* đon hàng => chờ lấy hàng */}
         <ShippingLabelModal
+          handleRefresh={handleRefresh}
           isVisible={isOpenModalInPhieu}
           onClose={() => {
             setIsOpenModalInPhieu(false);
@@ -257,6 +301,7 @@ const StatusTable: React.FC<StatusTable> = ({
                         3
                       );
                       setIsOpenModalGuidvvc(false);
+                      handleRefresh();
                     })
                     .catch(() => {
                       ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3);
@@ -314,6 +359,7 @@ const StatusTable: React.FC<StatusTable> = ({
                         3
                       );
                       setIsOpenModaldvvc(false);
+                      handleRefresh();
                     })
                     .catch(() => {
                       ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3);
@@ -328,6 +374,29 @@ const StatusTable: React.FC<StatusTable> = ({
         >
           Xác nhận giao hàng?
         </Modal>
+
+        {/* xử lý nhiều */}
+        <Modal
+          centered
+          title="Gửi nhiều đơn hàng"
+          open={isVisibleXLN}
+          onCancel={() => setIsVisibleXLN(false)}
+          footer={
+            <div
+              style={{
+                display: "flex",
+                gap: "16px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <ButtonCustom text="Gửi" onClick={handleXuLyNhieu} />
+              <Button key="close" onClick={() => setIsVisibleXLN(false)}>
+                Đóng
+              </Button>
+            </div>
+          }
+          width={600}
+        ></Modal>
       </Spin>
     </div>
   );

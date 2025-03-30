@@ -14,13 +14,13 @@ interface CustomJwtPayload extends JwtPayload {
 const HeaderLayout = () => {
   const navigate = useNavigate(); // Dùng để điều hướng
 
-    const itemsMenu = [
-        {
-            key: 'dang-xuat',
-            label: 'Đăng xuất',
-        }
-    ]
-    // Xử lý khi chọn item trong dropdown
+  const itemsMenu = [
+    {
+      key: "dang-xuat",
+      label: "Đăng xuất",
+    },
+  ];
+  // Xử lý khi chọn item trong dropdown
   const handleMenuClick: MenuProps["onClick"] = ({ key }) => {
     if (key === "dang-xuat") {
       localStorage.removeItem("auth"); // Xóa token
@@ -29,21 +29,25 @@ const HeaderLayout = () => {
     }
   };
 
-    const authValue = localStorage.getItem("auth");
-      const [auth, setAuth] = useState<CustomJwtPayload>();
-      useEffect(()=> {
-        if (authValue) {
-              const decoded = jwtDecode(authValue);
-              setAuth(decoded);
-            }
-      },[])
+  const authValue = localStorage.getItem("auth");
+  const [auth, setAuth] = useState<CustomJwtPayload>();
+  useEffect(() => {
+    if (authValue) {
+      const decoded = jwtDecode(authValue);
+      setAuth(decoded);
+    }
+  }, []);
   return (
     <Header
       className="header-layout"
       style={{ padding: 0, background: "var(--color-primary-1)" }}
     >
       <div className="left-header">
-        <img src="/images/logo2.png" alt="Delias Logo" style={{width:"12%"}}/>
+        <img
+          src="/images/logo2.png"
+          alt="Delias Logo"
+          style={{ width: "12%" }}
+        />
       </div>
 
       <div className="right-header">
@@ -53,13 +57,19 @@ const HeaderLayout = () => {
           </Badge>
         </div>
         <div className="nguoi-dung-avt">
-        <Dropdown menu={{ items: itemsMenu, onClick: handleMenuClick }} trigger={['click']}>
+          <Dropdown
+            menu={{ items: itemsMenu, onClick: handleMenuClick }}
+            trigger={["click"]}
+          >
             <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                    <Avatar icon={<UserOutlined />} /> {(auth?.dvvc_id === '' || auth?.dvvc_id === null) ? "Administrator" : "Shipper"}
-                </Space>
+              <Space>
+                <Avatar icon={<UserOutlined />} />{" "}
+                {auth?.dvvc_id === "" || auth?.dvvc_id === null
+                  ? "Administrator"
+                  : "Shipper"}
+              </Space>
             </a>
-        </Dropdown>
+          </Dropdown>
         </div>
       </div>
     </Header>

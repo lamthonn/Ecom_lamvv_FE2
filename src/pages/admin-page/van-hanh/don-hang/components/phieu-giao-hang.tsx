@@ -10,11 +10,13 @@ type Props = {
   isVisible: boolean;
   onClose: () => void;
   data?: any;
+  handleRefresh?:()=> void
 };
 
 const ShippingLabelModal: React.FC<Props> = ({
   isVisible,
   onClose,
+  handleRefresh,
   data,
 }) => {
 
@@ -38,6 +40,7 @@ const ShippingLabelModal: React.FC<Props> = ({
         .then(() => {
           ShowToast("success", "Thông báo", "Chuẩn bị đơn hàng thành công", 3);
           onClose();
+          handleRefresh?.()
         })
         .catch(() => {
           ShowToast("error", "Thông báo", "Có lỗi xảy ra", 3);
