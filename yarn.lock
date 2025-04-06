@@ -8635,7 +8635,7 @@ react-app-polyfill@^3.0.0:
 
 react-barcode@^1.6.1:
   version "1.6.1"
-  resolved "https://registry.npmmirror.com/react-barcode/-/react-barcode-1.6.1.tgz"
+  resolved "https://registry.npmjs.org/react-barcode/-/react-barcode-1.6.1.tgz"
   integrity sha512-pc4ftnO5syHa/UjCruEeRsomlhoxKSugIgTA8T4dH0fvc89UMHL+/1Sp25IAphqG44pJkE5hMXhv89iS09jQyw==
   dependencies:
     jsbarcode "^3.8.0"
