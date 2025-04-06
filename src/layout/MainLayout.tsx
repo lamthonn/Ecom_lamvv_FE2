@@ -42,10 +42,6 @@ const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
         }
   },[])
 
-  useEffect(()=> {
-    console.log(auth);
-    
-  })
   const handleChangeMenu: MenuProps['onClick']  = (item:any) => {
     if(item.key === "dashboard") {
       navigate(routesConfig.dashboard);

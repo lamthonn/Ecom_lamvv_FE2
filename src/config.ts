@@ -91,10 +91,10 @@ export const menuItem :MenuProps["items"] = [
           key: "so-du",
           label: "Số dư",
         },
-        {
-          key: "tai-khoan-ngan-hang",
-          label: "Tài khoản ngân hàng",
-        },
+        // {
+        //   key: "tai-khoan-ngan-hang",
+        //   label: "Tài khoản ngân hàng",
+        // },
       ],
     },
     {

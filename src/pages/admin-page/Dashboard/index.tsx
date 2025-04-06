@@ -6,12 +6,15 @@ import DatePickerCustomOld from "../../../components/datepicker/DatePickerCustom
 import { RangePickerProps } from "antd/es/date-picker";
 import MainLayout from "../../../layout/MainLayout";
 import { GetDashboardStats } from "../../../services/DoanhThuServices";
+import { useNavigate } from "react-router-dom";
+import { routesConfig } from "../../../routes/routes";
 
 const Dashboard = () => {
     const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
         dayjs().startOf("month"),
         dayjs()
     ]);
+  const navigate = useNavigate();
 
     const [stats, setStats] = useState({
         totalRevenue: 0,
@@ -65,7 +68,7 @@ const Dashboard = () => {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card onClick={() => navigate(routesConfig.quanLyDonHang)} style={{ cursor: "pointer" }}>
                         <Statistic
                             title="Tổng số đơn hàng"
                             value={stats.totalOrders}
@@ -74,7 +77,7 @@ const Dashboard = () => {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card onClick={() => navigate(routesConfig.quanLyKhachHang)} style={{ cursor: "pointer" }}>
                         <Statistic
                             title="Tổng số khách hàng"
                             value={stats.totalCustomers}
@@ -83,7 +86,7 @@ const Dashboard = () => {
                     </Card>
                 </Col>
                 <Col span={6}>
-                    <Card>
+                    <Card onClick={() => navigate(routesConfig.quanLySanPham)} style={{ cursor: "pointer" }}>
                         <Statistic
                             title="Tổng số sản phẩm"
                             value={stats.totalProducts}
