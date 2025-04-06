@@ -107,11 +107,11 @@ export const menuItem :MenuProps["items"] = [
       icon: React.createElement(UserOutlined), 
       label: "Cấu hình hệ thống",
     },
-    {
-      key: "test-component",
-      icon: React.createElement(SettingOutlined), 
-      label: "Common Component",
-    },
+    // {
+    //   key: "test-component",
+    //   icon: React.createElement(SettingOutlined), 
+    //   label: "Common Component",
+    // },
   ];
 
 export const menuItemVC :MenuProps["items"] = [

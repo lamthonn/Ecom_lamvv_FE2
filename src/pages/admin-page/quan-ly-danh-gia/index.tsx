@@ -134,7 +134,7 @@ const QuanLyDanhGia: React.FC<QuanLyDanhGiaProps> = () => {
             isViewDetail={true}
             columns={columns}
             DeleteTitle="Xóa mã giảm giá"
-            get_list_url="/api/danh-gia"
+            get_list_url="/api/danh-gia/get-all-paging"
             delete_any_url='/api/ma-giam-gia/delete-multiple'
             add_url='/api/ma-giam-gia'
             isSearchGeneral={true}
