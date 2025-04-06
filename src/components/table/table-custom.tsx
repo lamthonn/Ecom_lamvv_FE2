@@ -142,10 +142,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [totalPage, setTotalPage] = useState<number>(1);
   const [totalRecord, setTotalRecord] = useState<number>(1);
 
-  useEffect(()=> {
-    console.log("hihihihih");
-    
-  },[setRefreshData])
+
   const navigate = useNavigate();
   useEffect(() => {
     const authValue = localStorage.getItem("auth");
