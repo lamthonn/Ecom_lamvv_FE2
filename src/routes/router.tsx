@@ -18,6 +18,7 @@ import AccountInfo from "../pages/admin-page/cau-hinh";
 import DanhSachMaGiamGia from "../pages/admin-page/quan-ly-ma-giam-gia/danh-sach";
 import DanhSachChuongTrinhMarketing from "../pages/admin-page/quan-ly-chuong-trinh-marketing/danh-sach";
 import RevenueStats from "../pages/admin-page/doanh-thu";
+import QuanLyDanhGia from "../pages/admin-page/quan-ly-danh-gia";
 
 export const router = createBrowserRouter([
   {
@@ -96,6 +97,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <DanhSachMaGiamGia />
+          </ProtectedRoute>
+        )
+      },
+      // quản lý mã giảm giá
+      {
+        path: routesConfig.quanLyDanhGia,
+        element: (
+          <ProtectedRoute>
+            <QuanLyDanhGia />
           </ProtectedRoute>
         )
       },

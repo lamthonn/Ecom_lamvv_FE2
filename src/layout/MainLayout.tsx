@@ -79,6 +79,9 @@ const MainLayout: React.FC<{children?: React.ReactNode, label?:string }> = ({
     if(item.key === "quan-ly-khach-hang") {
       navigate(routesConfig.quanLyKhachHang);
     }
+    if(item.key === "quan-ly-danh-gia") {
+      navigate(routesConfig.quanLyDanhGia);
+    }
   }
   // Kiểm tra nếu route là "/login"
   if (location.pathname === "/login") {

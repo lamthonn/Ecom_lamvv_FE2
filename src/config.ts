@@ -1,4 +1,4 @@
-import { CarOutlined, ControlOutlined, DollarOutlined, NotificationOutlined, PieChartOutlined, ProductOutlined, SettingOutlined, TeamOutlined, UsergroupAddOutlined, UserOutlined } from "@ant-design/icons";
+import { CarOutlined, ControlOutlined, DollarOutlined, NotificationOutlined, PieChartOutlined, ProductOutlined, SettingOutlined, StarOutlined, TeamOutlined, UsergroupAddOutlined, UserOutlined } from "@ant-design/icons";
 import { MenuProps } from "antd";
 import React from 'react';
 
@@ -23,6 +23,11 @@ export const menuItem :MenuProps["items"] = [
       key: "quan-ly-khach-hang",
       icon: React.createElement(UsergroupAddOutlined), 
       label: "Quản lý khách hàng",
+    },
+    {
+      key: "quan-ly-danh-gia",
+      icon: React.createElement(StarOutlined), 
+      label: "Quản lý đánh giá",
     },
     {
       key: "quan-ly-san-pham",

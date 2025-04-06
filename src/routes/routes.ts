@@ -28,6 +28,7 @@ export const routesConfig = {
     taiKhoanNganHang:"/seller-center/tai-khoan-ngan-hang",
     //cấu hình hệ thống
     cauHinhHeThong:"/seller-center/cau-hinh-he-thong",
+    quanLyDanhGia:"/seller-center/quan-ly-danh-gia",
     
     //Common Component
     testComponent: "/seller-center/test-component",
