@@ -33,7 +33,12 @@ type TableCustomProps = {
   dataSource?: any;
   rowKey?: string;
   otherAction?: React.ReactNode;
-
+  operationButtonCustom?: React.ReactNode;
+  HandleOperationButton?: (data?:any)=> void;
+  dieu_kien1?:(record:any)=> void;
+  dieu_kien2?:(record:any)=> void;
+  dieu_kien3?:(record:any)=> void;
+  dieu_kien4?:(record:any)=> void;
   //action
   isViewDetail?: boolean;
   isEditOne?: boolean;
@@ -47,10 +52,12 @@ type TableCustomProps = {
   edit_url?: string;
   add_url?: string;
   delete_one_url?: string;
+  setRefreshData?:()=> void;
   delete_any_url?: string;
   export_url?: string;
   handleOpenModalAddCustom?: () => void;
-  handleOpenModalEditCustom?: () => void;
+  handleOpenModalDetailCustom?: () => void;
+  handleOpenModalEditCustom?: (data?:any) => void;
   handleDeleteCustom?: () => void;
   setSelected?: React.Dispatch<React.SetStateAction<any>>
   setRecord?: React.Dispatch<React.SetStateAction<any>>
@@ -76,14 +83,22 @@ type TableCustomProps = {
 
 const TableCustom: React.FC<TableCustomProps> = ({
   columns,
+  setRefreshData,
   setCurrent,
+  dieu_kien1,
+  dieu_kien2,
+  dieu_kien3,
+  dieu_kien4,
   dataSource,
   otherAction,
+  HandleOperationButton,
+  operationButtonCustom,
   isViewDetail = false,
   isEditOne = true,
   isDeleteOne = true,
   handleOpenModalAddCustom,
   handleOpenModalEditCustom,
+  handleOpenModalDetailCustom,
   handleDeleteCustom,
   setSelected,
   setRecord,
@@ -127,6 +142,10 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [totalPage, setTotalPage] = useState<number>(1);
   const [totalRecord, setTotalRecord] = useState<number>(1);
 
+  useEffect(()=> {
+    console.log("hihihihih");
+    
+  },[setRefreshData])
   const navigate = useNavigate();
   useEffect(() => {
     const authValue = localStorage.getItem("auth");
@@ -184,7 +203,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   const [idEditRecord, setIdEditRecord] = useState<string | null>(null);
   const handleOpenEditModal = (data: any) => {
     if (handleOpenModalEditCustom) {
-      handleOpenModalEditCustom();
+      handleOpenModalEditCustom(data);
     } else {
       if (edit_url_page) {
         navigate(`${edit_url_page}/${data[`${edit_url_page_filter_field}`]}`);
@@ -368,7 +387,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
         ((curentPage ?? 1) - 1) * pageSize + index + 1,
     },
     ...(columns || []),
-    ...(isEditOne === false && isViewDetail === false && isDeleteOne === false
+    ...(isEditOne === false && isViewDetail === false && isDeleteOne === false && otherAction === null
       ? []
       : [
           {
@@ -378,27 +397,27 @@ const TableCustom: React.FC<TableCustomProps> = ({
             fixed: "right" as "right",
             render: (text: any, record: any) => (
               <div className="action-table">
-                {otherAction ? (
+                {(otherAction && (dieu_kien1 ? dieu_kien1(record) : true)) ? (
                   <div onClick={()=> setRecord?.(record)}>
                     {otherAction}
                   </div>
                 ) : null}
 
-                {isViewDetail ? (
+                {(isViewDetail && (dieu_kien2 ? dieu_kien2(record) : true)) ? (
                   <EyeOutlined
                     className="action-table-edit"
                     onClick={() => handleOpenEditModal(record)}
                   />
                 ) : null}
 
-                {isEditOne ? (
+                {(isEditOne && (dieu_kien3 ? dieu_kien3(record) : true)) ? (
                   <EditOutlined
                     className="action-table-edit"
                     onClick={() => handleOpenEditModal(record)}
                   />
                 ) : null}
 
-                {isDeleteOne ? (
+                {(isDeleteOne && (dieu_kien4 ? dieu_kien4(record) : true)) ? (
                   <DeleteOutlined
                     className="action-table-delete"
                     onClick={() => handleDeleteConfirm(record)}
@@ -493,6 +512,13 @@ const TableCustom: React.FC<TableCustomProps> = ({
       )}
 
       <Space className="operation-button">
+        {
+          operationButtonCustom ? (
+            <div onClick={()=> HandleOperationButton?.(selectedRowKeys)}>
+              {operationButtonCustom}
+            </div>
+          ) : null
+        }
         {add_button ? (
           <ButtonCustom
             text="Thêm mới"

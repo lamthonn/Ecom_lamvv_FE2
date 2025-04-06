@@ -113,3 +113,17 @@ export const menuItem :MenuProps["items"] = [
       label: "Common Component",
     },
   ];
+
+export const menuItemVC :MenuProps["items"] = [
+  {
+    key: "shipper-vc",
+    icon: React.createElement(ControlOutlined), 
+    label: "Đơn hàng",
+    children: [
+      {
+        key: "don-hang-vc",
+        label: "Đơn hàng",
+      },
+    ],
+  },
+]

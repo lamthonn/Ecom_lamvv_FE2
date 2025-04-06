@@ -1,6 +1,6 @@
-import { Col, Divider, Form, Modal, Row, Spin, Typography } from "antd";
+import { Col, Form, Modal, Row, Spin, Typography } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import MainLayout from "../../../../layout/MainLayout";
 import TableCustom from "../../../../components/table/table-custom";
 import { formatDate } from "../../../../config/common";
@@ -93,6 +93,10 @@ const NhapKho: React.FC<NhapKhoProps> = ({}) => {
       <Spin spinning={loading}>
         <TableCustom
           columns={columns}
+          dieu_kien1={(record: any) => record.trang_thai === 1}
+          dieu_kien2={(record: any) => record.trang_thai === 1}
+          dieu_kien3={(record: any) => record.trang_thai === 1}
+          dieu_kien4={(record: any) => true}
           get_list_url="/api/phieu-nhap-kho"
           delete_one_url="/api/phieu-nhap-kho"
           export_url="/api/phieu-nhap-kho/export"

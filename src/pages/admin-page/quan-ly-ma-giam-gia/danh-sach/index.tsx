@@ -3,16 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import MainLayout from '../../../../layout/MainLayout';
 import TableCustom from '../../../../components/table/table-custom';
 import { formatDate } from '../../../../config/common';
-import { Col, Divider, Form, Row, Modal, Button, message, Switch } from 'antd';
+import { Col, Divider, Form, Row, } from 'antd';
 import DatePickerCustomOld from '../../../../components/datepicker/DatePickerCustomOld';
 import FormItemInput from "../../../../components/form-input/FormInput";
-import { axiosConfig } from '../../../../config/configApi';
-import { addMaGiamGia } from '../../../../services/MaGiamGiaServices';
 
 type DanhSachMaGiamGiaProps = {};
 
 const DanhSachMaGiamGia: React.FC<DanhSachMaGiamGiaProps> = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isAddModalVisible, setIsAddModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
 
@@ -71,9 +69,9 @@ const DanhSachMaGiamGia: React.FC<DanhSachMaGiamGiaProps> = () => {
   ];
 
   // Hàm mở modal thêm mã giảm giá
-  const handleAddMaGiamGia = () => {
-    setIsAddModalVisible(true);
-  };
+  // const handleAddMaGiamGia = () => {
+  //   setIsAddModalVisible(true);
+  // };
 
   // Hàm đóng modal
   const handleCancel = () => {
