@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, Button, Typography, Divider } from "antd";
 import "./phieu-giao-hang.scss";
 import Barcode from "react-barcode";
@@ -20,10 +20,16 @@ const ShippingLabelModal: React.FC<Props> = ({
   data,
 }) => {
 
+
+  useEffect(()=> {
+    console.log("data:::", data);
+    
+  },[data])
   // Nếu data chưa có, hiển thị loading hoặc giá trị mặc định
   if (!data) {
     return null; // hoặc <p>Đang tải dữ liệu...</p>;
   }
+
 
   const maDonHang = data.ma_don_hang || "12312374928731HNVTP";
   const handlePrint = () => {
@@ -92,6 +98,23 @@ const ShippingLabelModal: React.FC<Props> = ({
         {/* địa chỉ */}
         <Typography.Text>Địa chỉ: {data.tai_khoan.dia_chi}</Typography.Text>
 
+
+        {/* Thông tin sản phẩm */}
+        <Divider style={{ borderColor: "#black", margin: "0 !important" }}>
+          Sản phẩm
+        </Divider>
+        {
+          data.ds_chi_tiet_don_hang.map((item:any)=> {
+            return (
+              <Typography.Text style={{ fontWeight: "bold" }}>
+                {item.ten_san_pham} {item.kich_thuoc ? ` - ${item.kich_thuoc}` : ""} {item.mau_sac ? ` - ${item.mau_sac}` : ""} - SL: {item.so_luong} - {item.thanh_tien.toLocaleString("vi-VN", {style: "currency",currency: "VND",})}
+              </Typography.Text>
+            )
+          })
+        }
+
+        <Divider style={{ borderColor: "#black", margin: "0 !important" }}>
+        </Divider>
         <Typography.Title className="shipping-label-title">
           Số tiền thu hộ:{" "}
           {data.thanh_tien.toLocaleString("vi-VN", {
