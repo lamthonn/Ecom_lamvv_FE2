@@ -39,14 +39,14 @@ const AdminLogin = () => {
           ShowToast(
             "success",
             "Đăng nhập thành công",
-            "Chào mừng bạn đến với Delias Seller Center"
+            "Chào mừng bạn đến với G-connect Seller Center"
           );
         }else{
           navigate("/van-chuyen/don-hang");
           ShowToast(
             "success",
             "Đăng nhập thành công",
-            "Chào mừng bạn đến với Delias Seller Center"
+            "Chào mừng bạn đến với G-connect Seller Center"
           );
         }
       })
@@ -69,10 +69,10 @@ const AdminLogin = () => {
           <div className="login-title">
             <img
               src="/images/logo2.png"
-              alt="Delias Logo"
+              alt="G-connect Logo"
               style={{ width: "50%" }}
             />
-            <Title level={3}>Delias Seller Center</Title>
+            <Title level={3}>G-connect Seller Center</Title>
           </div>
 
           <Form

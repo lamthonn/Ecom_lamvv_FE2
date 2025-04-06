@@ -45,7 +45,7 @@ const HeaderLayout = () => {
       <div className="left-header">
         <img
           src="/images/logo2.png"
-          alt="Delias Logo"
+          alt="G-connect Logo"
           style={{ width: "12%" }}
         />
       </div>
