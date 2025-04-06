@@ -76,6 +76,7 @@ type TableCustomProps = {
 
   //search
   searchComponent?: React.ReactNode;
+  RanDataUpdated?: number;
 
   // icon clone
   action_element?: (record: any, onDataUpdated: () => void) => React.ReactNode;
@@ -126,6 +127,7 @@ const TableCustom: React.FC<TableCustomProps> = ({
   param_export,
   isSearchGeneral = false,
   action_element,
+  RanDataUpdated
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState<boolean>(false);
@@ -180,6 +182,9 @@ const TableCustom: React.FC<TableCustomProps> = ({
   useEffect(() => {
     getData(curentPage, pageSize);
   }, []);
+  useEffect(() => {
+    if(RanDataUpdated) getData(curentPage, pageSize);
+  }, [RanDataUpdated]);
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = (
     current,
